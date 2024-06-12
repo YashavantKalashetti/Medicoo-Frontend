@@ -1,0 +1,46 @@
+:root{
+    --primary: rgb(218, 251, 89);
+}
+
+.aboutservice{
+    padding: 100px 160px;
+    margin-left: 50px;
+    max-width: 1450px;
+}
+
+.service-image {
+    width: 500px;
+    height: 500px;
+}
+
+.service-content button{
+    padding: 10px ;
+    /* background-color:rgb(54, 57, 57); */
+    background-color:rgb(218, 251, 89);
+    color:rgb(37, 38, 40);
+    border: none;
+    margin-right: 70px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.service-content button:hover{
+    background-color:rgb(54, 57, 57);
+    color:rgb(204, 213, 225);
+    transition: 0.5s;
+}
+
+.xx{
+    line-height: 45px;
+}
+
+.doc-info{
+    margin-top: -20px;
+    background-color: aliceblue;
+    padding:  10px 15px;
+    border-radius: 10px;
+}
+
+.metrics{
+    border-top: 2px solid rgb(167, 214, 228);
+}

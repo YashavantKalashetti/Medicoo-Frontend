@@ -1,0 +1,84 @@
+.login-container{
+    max-width: 1000px;
+    margin: 70px auto;
+    display: flex;
+    background-color: rgb(199, 225, 237);
+    /* filter: blur(2px); */
+    /* background-color: transparent; */
+    justify-content: space-between;
+    padding: 50px 25px 75px 25px;
+    border-radius: 25px;
+
+}
+
+
+
+.login-img{
+    flex: 1;
+}
+
+.login-form{
+    flex: 1;
+    /* padding: 20px; */
+}
+
+select{
+    background-color: rgb(199, 225, 237);
+    border: none;
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid rgb(27, 52, 59);
+    /* outline: none; */
+}
+
+select:hover{
+    background-color: rgb(27, 52, 59);
+    color: white;
+}
+
+select:focus{
+    background-color: rgb(27, 52, 59);
+    color: white;
+}
+
+select option:hover{
+    background-color: rgb(44, 139, 165);
+}
+
+.custom-select option{
+    padding: 4px;
+}
+
+option{
+    padding: 4px;
+}
+
+option:hover{
+    background-color: rgb(27, 52, 59);
+}
+
+.login-items{
+    width: 320px;
+}
+
+.submitbtn button:hover{
+    background-color:rgb(54, 57, 57);
+    color:rgb(204, 213, 225);
+    transition: 0.5s;
+}
+
+.loginn{
+    font-weight: 600;
+}
+
+.somesentence{
+    width: 300px;
+    margin-left: 120px;
+    background-color: rgb(216, 241, 253);
+    margin-top: -30px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}

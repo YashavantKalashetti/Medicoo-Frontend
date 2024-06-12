@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Oregano:ital@0;1&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+.pat_name{
+    font-family: 'Urbanist', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 5px;
+    width: 60px;
+}
+
+.head{
+    font-size: 13px;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.age{
+    font-size: 14px;
+    font-family: 'Urbanist', sans-serif;
+}
+
+.headx{
+    font-size: 12px;
+    font-family: 'Urbanist', sans-serif;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.ph-head{
+    font-size: 15px;
+    font-family: 'Urbanist', sans-serif;
+    color: #1a1616;
+    font-weight: 650;
+    margin-bottom: 3px;
+}
+
+.si{
+    font-size: 13px;
+
+}
+
+.hxx{
+    font-size: 13px;
+    font-family: 'Urbanist', sans-serif;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+.text-date{
+    font-size: 12px;
+    font-family: 'Urbanist', sans-serif;
+    /* color: #333; */
+    /* margin-bottom: 3px; */
+}
+
+.text-datex{
+    font-size: 13px;
+    font-weight: 500;
+    /* font-family: 'Urbanist', sans-serif;
+    color: #333;
+    margin-bottom: 3px; */
+
+}
+
+.ph-headx{
+    font-size: 14px;
+    font-weight: 500;
+    /* font-family: 'Urbanist', sans-serif; */
+    /* color: #1a1616;
+    font-weight: 650;
+    margin-bottom: 3px; */
+}
+
+.recent-report-head{
+    border-radius: 15px;
+}
+
+.recent-report-head img{
+    width: fit-content;
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    margin-top: 10px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.report-table{
+    /* margin-top: 8px; */
+    border-bottom: 1px solid #F1F5F9;
+    padding-bottom: 4px;
+}
+
+.medication-freq {
+    width:30px;
+    height: 30px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 13px; 
+    border-radius: 50%; 
+    background-color: #F1F5F9;
+    margin-left: 29px;
+    padding: 0; 
+}
+
+.durationx{
+    font-size: 12px;
+    font-weight: 500;
+    width:80px;
+    /* height: 60px;  */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 13px; 
+    border-radius: 20px; 
+    border: 2px solid #d3d7db;
+    margin-left: 29px;
+    padding: 6px; 
+    
+}
