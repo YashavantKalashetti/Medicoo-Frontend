@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import {
     Avatar,
@@ -26,8 +26,16 @@ import {
 } from "@/components/ui/table"
 import { CiMedicalCase } from "react-icons/ci";
 import { PiPillLight } from "react-icons/pi";
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export default function Patient() {
+
+    const [formattedDate, setFormattedDate] = useState('');
+    const [patientgender, setPatientGender] = useState('');
+    const [patientname, setPatientName] = useState('');
+    const [otherhealthdetails, setOtherHealthDetails] = useState(''); // [height, weight, blood pressure, heart rate, blood group, id]
+
     // dummy data
     const reports = [
         {
@@ -103,6 +111,48 @@ export default function Patient() {
         },
     ]
 
+    // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MTIxNjYyNC1jZDhmLTRhYjYtYTg0MS0xNDI3NTY5ZTVmNDMiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnQ0NEBnbWFpbC5jb20iLCJpYXQiOjE3MTkwNDczOTIsImV4cCI6MTcxOTQ3OTM5Mn0.rxEF_31q1BGLIH0QV1FJXWSmT0l2sez6JHlbUXRGnuk'
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnQ0NEBnbWFpbC5jb20iLCJpYXQiOjE3MTkwNjYwOTEsImV4cCI6MTcxOTQ5ODA5MX0.0-maQD3nv24hBTGFqTzUK-iolbFNjTAz80plqIMjIzA';
+                const url = 'https://medicoo.onrender.com/api/v1/patient';
+
+                const response = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                // genral indo
+                const patientData = response.data.patient;
+                setPatientName(patientData.name);
+                setPatientGender(patientData.gender);
+                const formattedDate = new Date(patientData.dob).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }).replace(/ /g, '-');
+
+                setFormattedDate(formattedDate);
+
+
+                console.log("Patient Details:", patientData.name, formattedDate, patientData.gender);
+                console.log(response.data);
+
+                // other details
+                const medicalDetails = response.data.medicalDetails;
+                setOtherHealthDetails(medicalDetails);
+
+
+            } catch (error) {
+                console.error('There was an error making the request!', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
     return (
         <div className='flex mt-4 '>
@@ -118,7 +168,7 @@ export default function Patient() {
                                     <AvatarImage src="Bob_29.webp" alt="@shadcn" />
                                     {/* <AvatarFallback>CNcgfvbnm</AvatarFallback> */}
                                 </Avatar>
-                                <p className='font-bold font text-lg pat_name '>Yashavant kalashetti</p>
+                                <p className='font-bold font text-lg pat_name '>{patientname}</p>
                             </div>
                             <div className="edit-icon mr-3 mt-4 rounded-full p-3 py-2 bg-stone-100 h-[35px]">
                                 <MdOutlineModeEdit />
@@ -130,15 +180,15 @@ export default function Patient() {
                             <div className="metriccs mt-4 flex flex-wrap gap-5">
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Gender</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>Male</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{patientgender}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Date of Birth</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>22-Feb-2003</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{formattedDate}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
-                                    <p className='text-sm text-slate-500 head' >Location</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>Bengaluru</p>
+                                    <p className='text-sm text-slate-500 head' >Blood Group</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{otherhealthdetails.bloodGroup || "O+"}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >ID</p>
@@ -151,17 +201,18 @@ export default function Patient() {
                                     <div className="height bg-slate-50 mt-4 w-[135px] px-2 py-4 rounded-2xl ">
                                         <div className="icon rounded-full p-2 bg-zinc-200 w-[35px] mb-6"><CiLineHeight /></div>
                                         <p className='text-sm text-slate-500 headx' >Height</p>
-                                        <p className='text-base font-bold text-gray-700 px-1 age'>5'7"  <span className='si'>cm</span></p>
+                                        {/* <p className='text-base font-bold text-gray-700 px-1 age'>5'7"  <span className='si'>cm</span></p> */}
+                                        <p className='text-base font-bold text-gray-700 px-1 age'>{otherhealthdetails.height || "5.7"}  <span className='si'>ft</span></p>
                                     </div>
                                     <div className="height bg-slate-50 mt-4 w-[135px] px-2 py-4 rounded-2xl ">
                                         <div className="icon rounded-full p-2 bg-zinc-200 w-[35px] mb-6"><TbWeight /></div>
                                         <p className='text-sm text-slate-500 headx' >Weight</p>
-                                        <p className='text-base font-bold text-gray-700 px-1 age'>62  <span className='si'>kg</span></p>
+                                        <p className='text-base font-bold text-gray-700 px-1 age'>{otherhealthdetails.weight || "60"}   <span className='si'>kg</span></p>
                                     </div>
                                     <div className="height bg-slate-50 mt-4 w-[135px] px-2 py-4 rounded-2xl ">
                                         <div className="icon rounded-full p-2 bg-zinc-200 w-[35px] mb-6"><MdOutlineBloodtype /></div>
                                         <p className='text-sm text-slate-500 headx' >Blood Pressure</p>
-                                        <p className='text-base font-bold text-gray-700 px-1 age'>120/80 <span className='si'>mm</span></p>
+                                        <p className='text-base font-bold text-gray-700 px-1 age'>{otherhealthdetails.systolic || "120"} /{otherhealthdetails.diastolic || "80"}  <span className='si'>mm</span></p>
                                     </div>
                                     <div className="height bg-slate-50 mt-4 w-[135px] px-2 py-4 rounded-2xl  ">
                                         <div className="icon rounded-full p-2 bg-zinc-200 w-[35px] mb-6"><TfiHeartBroken /></div>
@@ -226,9 +277,11 @@ export default function Patient() {
                         <div className="appointments p-2 px-4 pb-4 bg-white w-[490px] rounded-2xl">
                             <div className="appointment-header flex  justify-between mb-4">
                                 <h2 className='mt-2 mx-4 text-lg font-bold text-gray-700 '>Appointments</h2>
-                                <div className="lab-icon rounded-full  p-3 bg-gray-100 mr-3">
-                                    <MdNorthEast />
-                                </div>
+                                <Link to="/patient/appointments">
+                                    <div className="lab-icon rounded-full p-3 bg-gray-100 mr-3 cursor-pointer transition duration-300 ease-in-out transform hover:bg-gray-200 hover:shadow-lg hover:scale-105">
+                                        <MdNorthEast className="transition duration-300 ease-in-out hover:text-gray-700" />
+                                    </div>
+                                </Link>
                             </div>
                             <div className="tableappoint -pb-3">
                                 <Table>
@@ -292,8 +345,8 @@ export default function Patient() {
                                             </div>
                                             <div className="medication-duration ml-2 text-sm durationx ">
                                                 {medication.duration}
-                                            
-                                        </div>
+
+                                            </div>
                                         </div>
 
                                     ))

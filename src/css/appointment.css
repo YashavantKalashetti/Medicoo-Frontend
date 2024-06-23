@@ -1,0 +1,8 @@
+/* styles.css */
+.smoke-gradient-text {
+    background: linear-gradient(to right, #d1d5db, #e5e7eb, #d1d5db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
