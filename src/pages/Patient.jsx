@@ -325,9 +325,11 @@ export default function Patient() {
                                     </div>
                                 </div>
                                 <div className="all-reports-icon">
-                                    <div className="lab-icon rounded-full mt-4 p-3 bg-gray-100 ">
-                                        <MdNorthEast />
-                                    </div>
+                                    <Link to="/patient/medications">
+                                        <div className="lab-icon rounded-full p-3 bg-gray-100 mr-3 cursor-pointer transition duration-300 ease-in-out transform hover:bg-gray-200 hover:shadow-lg hover:scale-105">
+                                            <MdNorthEast className="transition duration-300 ease-in-out hover:text-gray-700" />
+                                        </div>
+                                    </Link>
                                 </div>
                             </div>
                             <p className='mt-4 ml-2 text-base font-bold text-gray-700 px-1 age ' >Current Medications (3)</p>
