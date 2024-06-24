@@ -5,52 +5,63 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 const DEFAULT_AVATAR = "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png";
 
 const specializations = ['ALL'];
 
 const DoctorCard = ({ doctor }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    transition={{ type: "spring", stiffness: 400, damping: 17 }}
-  >
-    <Card className="overflow-hidden bg-white shadow-lg rounded-2xl">
-      <CardContent className="p-0">
-        <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center relative overflow-hidden">
-          <motion.img 
-            src={doctor.avatar || DEFAULT_AVATAR} 
-            alt={doctor.name} 
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          />
-          <motion.div 
-            className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <p className="text-sm font-medium">{doctor.availableForConsult ? 'Available for Consult' : 'Not Available'}</p>
-          </motion.div>
-        </div>
-        <div className="p-4">
-          <h3 className="text-xl font-semibold text-gray-800 mb-1">{doctor.name}</h3>
-          <p className="text-sm font-medium text-blue-500 mb-2">{doctor.specialization.charAt(0).toUpperCase() + doctor.specialization.slice(1).toLowerCase()}</p>
-          <div className="flex items-center mb-4">
-            <Star className="w-5 h-5 text-yellow-400 mr-1" />
-            <span className="text-sm font-medium text-gray-700">{doctor.rating.toFixed(1)} Rating</span>
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    >
+      <Card className="overflow-hidden bg-white shadow-lg rounded-2xl">
+        <CardContent className="p-0">
+          <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center relative overflow-hidden">
+            <motion.img 
+              src={doctor.avatar || DEFAULT_AVATAR} 
+              alt={doctor.name} 
+              className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div 
+              className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-1 flex items-center justify-center space-x-2 rounded-t-lg"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {doctor.availableForConsult ? (
+                <>
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span className="text-xs font-medium">Available</span>
+                </>
+              ) : (
+                <>
+                  <XCircle className="w-4 h-4 text-red-500" />
+                  <span className="text-xs font-medium">Unavailable</span>
+                </>
+              )}
+            </motion.div>
           </div>
-          <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full text-sm font-medium transition-colors duration-300">
-            Book Appointment
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  </motion.div>
-);
+          <div className="p-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>{doctor.name}</h3>
+            <p className="text-sm font-medium text-blue-600 mb-2" style={{ fontFamily: 'Roboto, sans-serif' }}>{doctor.specialization.charAt(0).toUpperCase() + doctor.specialization.slice(1).toLowerCase()}</p>
+            <div className="flex items-center mb-4">
+              <Star className="w-5 h-5 text-yellow-400 mr-1" />
+              <span className="text-sm font-medium text-gray-700" style={{ fontFamily: 'Roboto, sans-serif' }}>{doctor.rating.toFixed(1)} Rating</span>
+            </div>
+            <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full text-sm font-medium transition-colors duration-300" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              Book Appointment
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 
 const SearchBarWithDropdown = ({ searchTerm, setSearchTerm, selectedSpecialization, setSelectedSpecialization }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
