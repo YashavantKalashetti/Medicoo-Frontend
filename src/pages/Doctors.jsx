@@ -57,17 +57,34 @@ const SearchBarWithDropdown = ({ searchTerm, setSearchTerm, selectedSpecializati
 
   return (
     <div className="relative flex-grow max-w-md w-full">
-      <div className="flex items-center bg-white rounded-full shadow-md">
+      <div className="flex items-center bg-white rounded-full shadow-md relative">
         <Search className="absolute left-4 text-blue-500 w-6 h-6" />
         <Input
-          type="text"
-          placeholder="Search doctors..."
-          className="pl-12 pr-4 py-3 w-full rounded-full focus:ring-2 focus:ring-blue-300 transition-all duration-300"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+  type="text"
+  placeholder="Search doctors..."
+  className="pl-12 pr-32 py-3 w-full rounded-full focus:outline-none focus:ring-0 focus:ring-2 focus:ring-transparent focus:border-transparent focus:border-none focus:shadow-lg transition-all duration-300"
+  style={{
+    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+    transition: "box-shadow 0.3s ease-in-out",
+    border: "1px solid transparent"
+  }}
+  onFocus={(e) => {
+    e.target.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(192, 192, 192, 0.5)";
+    e.target.style.border = "1px solid transparent";
+  }}
+  onBlur={(e) => {
+    e.target.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+    e.target.style.border = "1px solid transparent";
+  }}
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
+
+
+
+
         <button
-          className="flex items-center justify-between py-3 px-4 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 rounded-full"
+          className="flex items-center justify-between py-3 px-4 text-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 rounded-full absolute right-0 top-0 bottom-0"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {selectedSpecialization}
