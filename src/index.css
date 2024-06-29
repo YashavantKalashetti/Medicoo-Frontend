@@ -1,8 +1,6 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
+  @tailwind components;
+  @tailwind utilities;
 
   @layer base {
     :root {
@@ -76,16 +74,3 @@
       @apply bg-background text-foreground;
     }
   }
-
-*{
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Roboto', sans-serif;
-  background: rgb(224,235,246);
-  /* background: radial-gradient(circle, rgba(224,235,246,1) 61%, rgba(245,242,244,1) 100%); */
-  background:#f8f9fc;
-  color: #333;
-}

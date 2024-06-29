@@ -10,6 +10,9 @@ import DoctorSearchPage from './pages/Doctors';
 import PatientSignupForm from './Auth/PatientSignup';
 import DoctorSignupForm from './Auth/DoctorSignup';
 import HospitalSignupForm from './Auth/HospitalSignup';
+import LoginForm from './Auth/LoginPage';
+import PrescriptionForm from './pages/Forms/PrescriptionForm';
+import MedicalSignupForm from './Auth/LoginPage';
 // import Medications from './pages/Medications';
 // import Appointments from './pages/Appointments';
 
@@ -24,12 +27,15 @@ function App() {
           </Route>
           <Route path="/patient" element={<Patient />} />
           <Route path="/doctor" element={<DoctorSearchPage />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/patient/appointments" element={<Appointments />} />
           <Route path="/patient/medications" element={<MedicationsPage />} />
           <Route path="/signup/patient" element={<PatientSignupForm />} />
           <Route path="/signup/doctor" element={<DoctorSignupForm/>} />
           <Route path="/signup/hospital" element={<HospitalSignupForm />} />
+          <Route path="/login" element={<MedicalSignupForm />} />
+
+          <Route path="/prescription" element={<PrescriptionForm/>} />
+
         </Routes>
       </Router>
     </>
