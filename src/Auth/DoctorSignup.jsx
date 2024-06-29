@@ -298,6 +298,7 @@ const DoctorSignupForm = () => {
                 </Select>
               </FormControl>
             </Grid>
+            
             <Grid item xs={12} sm={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker

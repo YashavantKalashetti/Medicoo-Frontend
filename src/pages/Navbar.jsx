@@ -2,6 +2,7 @@ import React from 'react'
 import '../css/Navbar.css'
 import { Button } from "@/components/ui/button"
 import { Link } from 'react-router-dom'
+import NotificationButton from '@/Auth/Notification'
 
 export default function Navbar() {
   return (
@@ -21,9 +22,10 @@ export default function Navbar() {
                             <li><a href="/contact">About</a></li>
                         </ul>
                     </nav>
-                    <div className='signin'>
+                    <div className='signin' style={{"display": "flex"}}>
                        <Link to="/login"><Button >Sign in</Button></Link>
                     </div>
+                    <NotificationButton />
                 </div>
             </div>
         </header>

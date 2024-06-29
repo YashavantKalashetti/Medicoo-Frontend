@@ -13,6 +13,7 @@ import HospitalSignupForm from './Auth/HospitalSignup';
 import LoginForm from './Auth/LoginPage';
 import PrescriptionForm from './pages/Forms/PrescriptionForm';
 import MedicalSignupForm from './Auth/LoginPage';
+import ResetPassword from './Auth/ResetPssword';
 // import Medications from './pages/Medications';
 // import Appointments from './pages/Appointments';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Mainpage />} >
             <Route index element={<HomePage />} />
           </Route>
+
           <Route path="/patient" element={<Patient />} />
           <Route path="/doctor" element={<DoctorSearchPage />} />
           <Route path="/patient/appointments" element={<Appointments />} />
@@ -33,6 +35,8 @@ function App() {
           <Route path="/signup/doctor" element={<DoctorSignupForm/>} />
           <Route path="/signup/hospital" element={<HospitalSignupForm />} />
           <Route path="/login" element={<MedicalSignupForm />} />
+
+          <Route path="/reset" element={<ResetPassword />} />
 
           <Route path="/prescription" element={<PrescriptionForm/>} />
 
