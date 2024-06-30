@@ -45,9 +45,10 @@ const NotificationComponent = () => {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-blue-500 text-white rounded-full"
+        className="p-2 bg-blue-500 text-white rounded-full fixed"
+        style={{ top: '2.8vh', right: '7vw' }}
       >
-        <Bell size={21} />
+        <Bell size={23} />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}
@@ -56,7 +57,7 @@ const NotificationComponent = () => {
       </button>
 
       {isOpen && (
-        <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg p-4 overflow-y-auto" style={{"width": "450px"}}>
+        <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg p-4 overflow-y-auto" style={{ width: '450px' }}>
           <button 
             onClick={() => setIsOpen(false)}
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 rounded-full"

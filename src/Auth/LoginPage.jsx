@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { MailIcon, EyeIcon, EyeOffIcon, LockKeyhole, UserRoundCheck } from 'lucide-react';
+import { MailIcon, EyeIcon, EyeOffIcon, LockKeyhole, UserRoundCheck, Loader2 } from 'lucide-react';
+import { set } from 'react-hook-form';
+// import CreateAccountButton from '@/Partials/CreateAccountButton';
+import CreateAccountLink from '@/Partials/CreateAccountLink';
+import ForgotPasswordLink from '@/Partials/ForgotPasswordLink';
 
 const MedicalSignupForm = () => {
   const [email, setEmail] = useState('');
@@ -13,15 +17,24 @@ const MedicalSignupForm = () => {
   const [userType, setUserType] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     setError('');
     if (!email || !password || !userType) {
       setError('Please fill in all fields.');
+      setLoading(false);
       return;
     }
-    console.log('Signup attempted with:', { email, password, userType });
+
+    setTimeout(() => {
+      console.log('Signup attempted with:', { email, password, userType });
+      setLoading(false);
+
+    }, 2000);
+
   };
 
   const togglePasswordVisibility = () => {
@@ -101,14 +114,28 @@ const MedicalSignupForm = () => {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+
+                {
+                  loading ? (
+                    <Button disabled className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg" >
+                      <Loader2 className="animate-spin" />
+                      Please wait
+                    </Button>
+                  ) : (
+                    <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                      Sign in
+                    </Button>
+                  )
+                }
+                {/* <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
                   Sign In
-                </Button>
+                </Button> */}
               </form>
             </CardContent>
             <CardFooter className="flex justify-between px-8">
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">Forgot password?</a>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">Create account</a>
+              {/* <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">Forgot password?</a> */}
+              <ForgotPasswordLink />
+              <CreateAccountLink />
             </CardFooter>
           </Card>
         </div>

@@ -32,7 +32,7 @@ function App() {
           <Route path="/" element={<Mainpage />} >
             <Route index element={<HomePage />} />
           </Route>
-
+          
 
           <Route path="/doctor" element={<DoctorSearchPage />} />
           <Route path="/hospitals" element={<HospitalList />} />

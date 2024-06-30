@@ -2,12 +2,12 @@ import Navbar from "./Navbar";
 import '../css/homepage.css'
 import { Button } from "@/components/ui/button";
 import NotificationButton from "@/Auth/Notification";
+import EmergencyNotificationSystem from "@/Partials/EmergencyNotificationPopUp";
 
 
 export default function HomePage() {
     return (
         <div>
-            
             <div className="aboutservice flex ">
                 <div className="service-content w-[600px] ml-8">
                     <p className="text-2xl mb-2 ">Health before anything</p>

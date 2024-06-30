@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Link } from 'react-router-dom';
 
 
 const tempHospital = {
@@ -86,7 +87,7 @@ const patientsCount = 0
 const emergencyAppointments = [{}]
 
 const HospitalDashboard = () => {
-  
+
   const [activeTab, setActiveTab] = useState('1');
 
   const [hospital, setHospital] = useState(tempHospital);
@@ -148,18 +149,18 @@ const HospitalDashboard = () => {
           
         </div>
         </Col>
-
         <Col xs={24} lg={6}>
-          <StatCard title="Doctors" value={registeredDoctors.length} icon={<TeamOutlined />} color="#1890ff" />
-        </Col>
-        <Col xs={24} lg={6}>
-          <StatCard title="Patients" value={patientsCount} icon={<UserOutlined />} color="#52c41a" />
+          <Link to="/hospital/emergency-appointments" ><StatCard title="Emergency" value={emergencyAppointments.length} icon={<MedicineBoxOutlined />} color="#f5222d" /></Link>
         </Col>
         <Col xs={24} lg={6}>
           <StatCard title="Today's Appointments" value={todayAppointment.length} icon={<CalendarOutlined />} color="#faad14" />
         </Col>
+
         <Col xs={24} lg={6}>
-          <StatCard title="Emergency" value={emergencyAppointments.length} icon={<MedicineBoxOutlined />} color="#f5222d" />
+          <Link to="/hospital/doctors" ><StatCard title="Doctors" value={registeredDoctors.length} icon={<TeamOutlined />} color="#1890ff" /></Link>
+        </Col>
+        <Col xs={24} lg={6}>
+        <Link to="/hospital/doctors" ><StatCard title="Patients" value={patientsCount} icon={<UserOutlined />} color="#52c41a" /> </Link>
         </Col>
 
         <Col xs={24} lg={16}>

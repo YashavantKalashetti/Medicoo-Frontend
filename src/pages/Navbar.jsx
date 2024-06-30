@@ -25,7 +25,6 @@ export default function Navbar() {
                     <div className='signin' style={{"display": "flex"}}>
                        <Link to="/login"><Button >Sign in</Button></Link>
                     </div>
-                    <NotificationButton />
                 </div>
             </div>
         </header>

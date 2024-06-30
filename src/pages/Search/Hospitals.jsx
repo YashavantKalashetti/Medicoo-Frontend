@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { height } from '@mui/system';
 import { Link } from 'react-router-dom';
 
+import {Pagination,PaginationContent,PaginationItem,PaginationLink,PaginationPrevious,PaginationNext,PaginationEllipsis} from "@/components/ui/pagination";
+
 const SPECIALTIES = [
   "SUPER_SPECIALTY", "MULTI_SPECIALTY", "FERTILITY", "EYE_CARE", "CARDIAC", "NEPHROLOGY", "ONCOLOGY",
   "GENERAL", "MATERNITY", "ORTHOPEDIC", "NEUROLOGY", "PSYCHIATRY", "PEDIATRIC", "GERIATRIC",
@@ -37,13 +39,28 @@ const hospitals = [
   { id: 13, name: "Gastroenterology Clinic", contactNumber: "369-147-2580", email: "contact@gastroclinic.com", address: "369 Poplar St, Town", speciality: ["GASTROENTEROLOGY"], availableForConsult: true },
   { id: 14, name: "Dermatology & Cosmetic Center", contactNumber: "147-258-3690", email: "info@dermatologycenter.com", address: "147 Sycamore St, Village", speciality: ["DERMATOLOGY"], availableForConsult: false },
   { id: 15, name: "Sports Medicine Hospital", contactNumber: "258-369-1470", email: "contact@sportsmedicine.com", address: "258 Redwood St, City", speciality: ["ORTHOPEDIC", "REHABILITATION_CENTER"], availableForConsult: true },
+  { id: 21, name: "City General Hospital", contactNumber: "123-456-7890", email: "info@citygeneral.com", address: "123 Main St, City", speciality: ["GENERAL", "MULTI_SPECIALTY"], availableForConsult: true },
+  { id: 22, name: "Women's Health Center", contactNumber: "987-654-3210", email: "contact@womenshealth.com", address: "456 Elm St, Town", speciality: ["FERTILITY", "MATERNITY"], availableForConsult: false },
+  { id: 23, name: "Children's Hospital", contactNumber: "456-789-0123", email: "info@childrenshospital.com", address: "789 Oak St, Village", speciality: ["PEDIATRIC"], availableForConsult: true },
+  { id: 24, name: "Heart Institute", contactNumber: "321-654-9870", email: "info@heartinstitute.com", address: "321 Pine St, City", speciality: ["CARDIAC"], availableForConsult: true },
+  { id: 25, name: "Cancer Research Center", contactNumber: "159-753-4680", email: "contact@cancercenter.com", address: "852 Maple St, Town", speciality: ["ONCOLOGY"], availableForConsult: false },
+  { id: 26, name: "Orthopedic Specialists", contactNumber: "753-951-8520", email: "info@orthospecialists.com", address: "147 Birch St, City", speciality: ["ORTHOPEDIC"], availableForConsult: true },
+  { id: 27, name: "Neurology Center", contactNumber: "852-741-9630", email: "contact@neurologycenter.com", address: "369 Cedar St, Town", speciality: ["NEUROLOGY"], availableForConsult: true },
+  { id: 28, name: "Dental Clinic", contactNumber: "963-852-7410", email: "info@dentalclinic.com", address: "258 Walnut St, Village", speciality: ["DENTAL"], availableForConsult: false },
+  { id: 29, name: "Eye Care Hospital", contactNumber: "741-852-9630", email: "contact@eyecare.com", address: "741 Spruce St, City", speciality: ["EYE_CARE"], availableForConsult: true },
+  { id: 110, name: "Mental Health Institute", contactNumber: "852-963-7410", email: "info@mentalhealthinstitute.com", address: "963 Ash St, Town", speciality: ["PSYCHIATRY"], availableForConsult: true },
+  { id: 111, name: "Respiratory Care Center", contactNumber: "147-258-3690", email: "contact@respiratorycare.com", address: "147 Beech St, Village", speciality: ["PULMONOLOGY"], availableForConsult: false },
+  { id: 112, name: "Kidney & Dialysis Center", contactNumber: "258-369-1470", email: "info@kidneycenter.com", address: "258 Willow St, City", speciality: ["NEPHROLOGY"], availableForConsult: true },
+  { id: 113, name: "Gastroenterology Clinic", contactNumber: "369-147-2580", email: "contact@gastroclinic.com", address: "369 Poplar St, Town", speciality: ["GASTROENTEROLOGY"], availableForConsult: true },
+  { id: 114, name: "Dermatology & Cosmetic Center", contactNumber: "147-258-3690", email: "info@dermatologycenter.com", address: "147 Sycamore St, Village", speciality: ["DERMATOLOGY"], availableForConsult: false },
+  { id: 115, name: "Sports Medicine Hospital", contactNumber: "258-369-1470", email: "contact@sportsmedicine.com", address: "258 Redwood St, City", speciality: ["ORTHOPEDIC", "REHABILITATION_CENTER"], availableForConsult: true },
 ];
 
 const HospitalList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const hospitalsPerPage = 12;
-
+  const hospitalsPerPage = 7;  
+  
   const filteredHospitals = useMemo(() => {
     return hospitals.filter(hospital => {
       const searchRegex = new RegExp(searchTerm, 'i');
@@ -56,12 +73,34 @@ const HospitalList = () => {
       );
     });
   }, [searchTerm]);
-
+  
   const indexOfLastHospital = currentPage * hospitalsPerPage;
+  const totalPages = Math.ceil(filteredHospitals.length / hospitalsPerPage);
   const indexOfFirstHospital = indexOfLastHospital - hospitalsPerPage;
   const currentHospitals = filteredHospitals.slice(indexOfFirstHospital, indexOfLastHospital);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const getPageNumbers = () => {
+    let startPage, endPage;
+    if (totalPages <= 3) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      if (currentPage <= 2) {
+        startPage = 1;
+        endPage = 3;
+      } else if (currentPage + 1 >= totalPages) {
+        startPage = totalPages - 2;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - 1;
+        endPage = currentPage + 1;
+      }
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -115,17 +154,58 @@ const HospitalList = () => {
         </Link>
       ))}
 
-      <div className="flex justify-center mt-6">
-        {Array.from({ length: Math.ceil(filteredHospitals.length / hospitalsPerPage) }, (_, i) => (
-          <Button
-            key={i}
-            onClick={() => paginate(i + 1)}
-            variant={currentPage === i + 1 ? "default" : "outline"}
-            className="mx-1"
-          >
-            {i + 1}
-          </Button>
-        ))}
+<div className="flex justify-center mt-6">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+              />
+            </PaginationItem>
+
+            {currentPage > 2 && (
+              <>
+                <PaginationItem>
+                  <PaginationLink href="#" onClick={() => paginate(1)}>
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationEllipsis />
+              </>
+            )}
+
+            {getPageNumbers().map((pageNumber) => (
+              <PaginationItem key={pageNumber}>
+                <PaginationLink
+                  href="#"
+                  onClick={() => paginate(pageNumber)}
+                  className={currentPage === pageNumber ? "font-bold" : ""}
+                >
+                  {pageNumber}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            {currentPage + 1 < totalPages && (
+              <>
+                <PaginationEllipsis />
+                <PaginationItem>
+                  <PaginationLink href="#" onClick={() => paginate(totalPages)}>
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
