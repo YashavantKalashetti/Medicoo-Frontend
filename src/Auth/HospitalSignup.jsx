@@ -99,7 +99,7 @@ const HospitalSignupForm = () => {
     lat: null,
     lon: null,
   });
-  const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState([12.972229, 77.594029]);
   const [displayAddress, setDisplayAddress] = useState('');
   const [locationFound, setLocationFound] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -378,7 +378,7 @@ const HospitalSignupForm = () => {
                 <Grid item xs={12}>
                   <Typography variant="body2" gutterBottom>
                     Validated Address: {displayAddress}
-                  </Typography>
+                  </Typography> 
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body2" gutterBottom>

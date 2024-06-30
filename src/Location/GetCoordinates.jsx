@@ -12,7 +12,7 @@ const GetCoordinates = () => {
   const [locationFound, setLocationFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
-const fetchCoordinates = async (address) => {
+  const fetchCoordinates = async (address) => {
     try {
       setLoading(true);
       const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`);
