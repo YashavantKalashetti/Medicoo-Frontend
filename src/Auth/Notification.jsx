@@ -46,7 +46,7 @@ const NotificationComponent = () => {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 bg-blue-500 text-white rounded-full fixed"
-        style={{ top: '2.8vh', right: '7vw' }}
+        style={{ top: '1.5vh', right: '4vw' }}
       >
         <Bell size={23} />
         {unreadCount > 0 && (

@@ -7,9 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MailIcon, EyeIcon, EyeOffIcon, LockKeyhole, UserRoundCheck, Loader2 } from 'lucide-react';
 import { set } from 'react-hook-form';
+
+import LoginImage from './LoginImage.jpg';
+
 // import CreateAccountButton from '@/Partials/CreateAccountButton';
 import CreateAccountLink from '@/Partials/CreateAccountLink';
 import ForgotPasswordLink from '@/Partials/ForgotPasswordLink';
+import { margin } from '@mui/system';
 
 const MedicalSignupForm = () => {
   const [email, setEmail] = useState('');
@@ -52,7 +56,7 @@ const MedicalSignupForm = () => {
 
         {/* Right side - Form */}
         <div className="w-1/2">
-          <Card className="bg-white shadow-none border-none">
+          <Card className="bg-white shadow-none border-none" style={{margin: "20px 0"}} >
             <CardHeader className="space-y-1">
               <CardTitle className="text-3xl font-bold text-center text-gray-800">Welcome back!</CardTitle>
               <p className="text-center text-gray-600">Enter your details to access your health information</p>

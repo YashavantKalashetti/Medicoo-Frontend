@@ -15,7 +15,7 @@ const CreateAccountLink = () => {
 
   const handleAccountTypeSelection = (type) => {
     setIsModalVisible(false);
-    navigate(`/signup/${type}`);
+    navigate(`/auth/${type}`);
   };
 
   const accountTypes = [
