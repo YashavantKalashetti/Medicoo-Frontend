@@ -77,8 +77,9 @@ const ReportOrganizer = () => {
         {filteredReports.map(report => (
           <div key={report.id} className="border rounded-md p-4 flex flex-col justify-between">
             <div>
-              <h3 className="font-semibold mb-2">{report.name}</h3>
-              <p className="text-sm text-gray-600 mb-2">{report.type}</p>
+              <h3 className="font-semibold mb-2">{report.type}</h3>
+              {/* If needed add a link for the prescription here */}
+              {/* <p className="text-sm text-gray-600 mb-2">{report.type}</p> */}
               <p className="text-sm text-gray-500 mb-2 flex items-center">
                 <Calendar size={16} className="mr-1" /> {report.date}
               </p>

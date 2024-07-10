@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { ScrollText } from 'lucide-react';
 import { CardTitle, CardContent } from '@/components/ui/card';
 
+import {Tooltip,TooltipContent,TooltipProvider,TooltipTrigger} from "@/components/ui/tooltip"
+
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 import {
@@ -112,7 +114,7 @@ const HospitalDashboard = () => {
   );
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f0f2f5' }}>
+    <div style={{ padding: '20px', marginTop:"20px", backgroundColor: '#f0f2f5' }}>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <div className="relative h-64 md:h-96">
@@ -130,13 +132,22 @@ const HospitalDashboard = () => {
           <Badge className="absolute top-4 right-4 text-sm md:text-base">
       <Tag color={hospital.availableForConsult ? "green" : "red"} icon={<ClockCircleOutlined />}>
         <AlertDialog>
-          <AlertDialogTrigger>{hospital.availableForConsult ? "Available": "Unavailable"} </AlertDialogTrigger>
+          <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger><AlertDialogTrigger>{hospital.availableForConsult ? "Available": "Unavailable"} </AlertDialogTrigger></TooltipTrigger>
+            <TooltipContent>
+            <p>Change Hopital Availability</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Availability Change</AlertDialogTitle>
+              
               <AlertDialogDescription>
                 Are you sure you want to change the availability status to {hospital.availableForConsult ? 'Unavailable' : 'Available'}?
               </AlertDialogDescription>
+              
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>

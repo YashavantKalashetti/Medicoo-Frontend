@@ -23,6 +23,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import MapComponent from './MapComponent';
 
 const theme = createTheme({
   palette: {

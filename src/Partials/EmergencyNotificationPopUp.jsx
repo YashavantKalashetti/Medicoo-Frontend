@@ -16,26 +16,17 @@ const EmergencyNotificationSystem = () => {
 
   useEffect(() => {
     // Simulated notifications (replace with actual WebSocket logic)
-    const timer1 = setTimeout(() => {
-      handleNewNotification({
-        id: 1,
-        title: 'High Priority Alert',
-        message: 'Critical system failure detected!',
-      });
-    }, 5000);
+    // const timer1 = setTimeout(() => {
+    //   handleNewNotification({
+    //     id: 1,
+    //     title: 'Emergency Medical Alert',
+    //     message: 'Patient PT1243217 - Tejas C M is under emergency. His location is 12.9716° N, 77.5946° E.',
+    //   });
+    // }, 5000);
 
-    const timer2 = setTimeout(() => {
-      handleNewNotification({
-        id: 2,
-        title: 'Weather Advisory',
-        message: 'Severe thunderstorm warning in your area.',
-      });
-    }, 10000);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
+    // return () => {
+    //   clearTimeout(timer1);
+    // };
   }, []);
 
   const handleNewNotification = useCallback((newNotification) => {

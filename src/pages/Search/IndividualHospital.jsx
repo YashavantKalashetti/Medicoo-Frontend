@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Hospital, Phone, Mail, MapPin, Calendar, Star, GraduationCap, Languages, Clock, ChevronRight, Users, Map, ScrollText } from 'lucide-react';
+import MapComponent from '@/Auth/MapComponent';
 
 const hospital = {
   "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
@@ -71,7 +72,7 @@ const HospitalProfile = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto p-4 space-y-6 mt-8 bg-red">
       <Card className="w-full overflow-hidden">
         <div className="relative h-64 md:h-96">
           <img 
@@ -92,7 +93,7 @@ const HospitalProfile = () => {
           </Badge>
         </div>
 
-        <Card className="m-6">
+        {/* <Card className="m-6">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center">
                     <ScrollText className='mr-2 h-7 w-10' />About
@@ -101,54 +102,74 @@ const HospitalProfile = () => {
             <CardContent>
               <p className="text-sm">{hospital.description}</p>
             </CardContent>
-        </Card>
+        </Card> */}
         
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <MapPin className="mr-2 h-5 w-5" /> Location
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm mb-4">{hospital.address}</p>
-                <Button onClick={openMap} className="w-full">
-                  <Map className="mr-2 h-4 w-4" /> View on Map
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Phone className="mr-2 h-5 w-5" /> Contact
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm flex items-center">
-                  <Phone className="mr-2 h-4 w-4" /> {hospital.contactNumber}
-                </p>
-                <p className="text-sm flex items-center">
-                  <Mail className="mr-2 h-4 w-4" /> {hospital.email}
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Hospital className="mr-2 h-5 w-5" /> Speciality
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">{hospital.speciality.replace('_', ' ')}</p>
-                <p className="text-sm mt-2 flex items-center">
-                  <Calendar className="mr-2 h-4 w-4" /> Established {new Date(hospital.createdAt).getFullYear()}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="h-full">
+            <CardHeader className="flex justify-between items-center">
+              <CardTitle className="text-3xl">Hospital Information</CardTitle>
+              {/* <span className="text-gray-500">Last updated: {new Date(hospital.updatedAt).toLocaleDateString()}</span> */}
+            </CardHeader>
+            <CardContent>
+              <div className="mb-6">
+                <h3 className="text-lg flex items-center">
+                  <ScrollText className='mr-2 h-6 w-7' /> About
+                </h3>
+                <p className="text-sm">{hospital.description}</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-base font-semibold flex items-center">
+                    <Phone className="mr-2 h-5 w-5" /> Contact
+                  </h4>
+                  <p className="text-sm">{hospital.contactNumber}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-base font-semibold flex items-center">
+                    <Mail className="mr-2 h-5 w-5" /> Email
+                  </h4>
+                  <p className="text-sm">{hospital.email}</p>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <h4 className="text-base font-semibold flex items-center">
+                    <MapPin className="mr-2 h-5 w-5" /> Address
+                  </h4>
+                  <p className="text-sm">{hospital.address}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-base font-semibold flex items-center">
+                    <Hospital className="mr-2 h-5 w-5" /> Speciality
+                  </h4>
+                  <p className="text-sm">{hospital.speciality.replace('_', ' ')}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div>
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle className="text-lg">Location</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div style={{ height: '300px' }}>
+                <MapComponent lat={hospital.latitude} lng={hospital.longitude} />
+              </div>
+              <Button onClick={openMap} className="w-full mt-2">
+                  <Map className="mr-2 h-4 w-4" /> Get Directions
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
           
           <Separator className="my-6" />
           
@@ -252,3 +273,4 @@ const HospitalProfile = () => {
 };
 
 export default HospitalProfile;
+            

@@ -9,7 +9,7 @@ import { PlusIcon, MinusIcon, UploadIcon, XIcon } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
-const PrescriptionForm = () => {
+const   PrescriptionForm = () => {
   const [medications, setMedications] = useState([]);
   const [attachments, setAttachments] = useState([]);
   const [errors, setErrors] = useState({});
@@ -110,7 +110,7 @@ const PrescriptionForm = () => {
   };
 
   return (
-    <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
+    <form onSubmit={onSubmit} className="mt-10 max-w-4xl mx-auto p-6 rounded-lg">
       <Card className="bg-white">
         <CardHeader>
           <h2 className="text-3xl font-bold text-center text-primary">Prescription Form</h2>
@@ -123,15 +123,15 @@ const PrescriptionForm = () => {
                 <SelectValue placeholder="Select prescription type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="IMPORTANT">Important</SelectItem>
                 <SelectItem value="NORMAL">Normal</SelectItem>
+                <SelectItem value="IMPORTANT">Important</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="instructionForOtherDoctor" className="text-lg font-medium">Instruction for Other Doctor</Label>
-            <Textarea name="instructionForOtherDoctor" placeholder="Enter instructions..." className="min-h-[100px]" />
+            <Textarea required name="instructionForOtherDoctor" placeholder="Enter instructions..." className="min-h-[100px]" />
           </div>
 
           <div className="space-y-4">
