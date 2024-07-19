@@ -14,29 +14,29 @@ const EmergencyNotificationSystem = () => {
   const [playAlert] = useSound(alertSound, { volume: 0.7});
   const draggleRef = useRef(null);
 
-  useEffect(() => {
-    // Simulated notifications (replace with actual WebSocket logic)
-    const timer1 = setTimeout(() => {
-      handleNewNotification({
-        id: 1,
-        title: 'High Priority Alert',
-        message: 'Critical system failure detected!',
-      });
-    }, 5000);
+  // useEffect(() => {
+  //   // Simulated notifications (replace with actual WebSocket logic)
+  //   const timer1 = setTimeout(() => {
+  //     handleNewNotification({
+  //       id: 1,
+  //       title: 'High Priority Alert',
+  //       message: 'Critical system failure detected!',
+  //     });
+  //   }, 5000);
 
-    const timer2 = setTimeout(() => {
-      handleNewNotification({
-        id: 2,
-        title: 'Weather Advisory',
-        message: 'Severe thunderstorm warning in your area.',
-      });
-    }, 10000);
+  //   const timer2 = setTimeout(() => {
+  //     handleNewNotification({
+  //       id: 2,
+  //       title: 'Weather Advisory',
+  //       message: 'Severe thunderstorm warning in your area.',
+  //     });
+  //   }, 10000);
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timer1);
+  //     clearTimeout(timer2);
+  //   };
+  // }, []);
 
   const handleNewNotification = useCallback((newNotification) => {
     setNotifications((prevNotifications) => [...prevNotifications, newNotification]);

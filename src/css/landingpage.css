@@ -1,0 +1,6 @@
+.csx:hover{
+    box-shadow: 1px -1px 6px 0px rgb(174, 215, 239);
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+
+}

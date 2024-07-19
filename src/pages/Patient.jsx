@@ -180,11 +180,11 @@ export default function Patient() {
                             <div className="metriccs mt-4 flex flex-wrap gap-5">
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Gender</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>{patientgender}</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{patientgender || "Male"}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Date of Birth</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>{formattedDate}</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{formattedDate||"22 Feb 2003"}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Blood Group</p>

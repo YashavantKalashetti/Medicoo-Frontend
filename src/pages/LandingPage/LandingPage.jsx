@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import Navbar from './Navbar';
 import HeroSection from './HeroSection';
+import '../../css/landingpage.css'
 
 const HealthcareLandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,13 +56,13 @@ const HealthcareLandingPage = () => {
             <h2 className="text-3xl font-extrabold text-gray-900">Our Services</h2>
             <p className="mt-4 text-lg text-gray-500">We offer a wide range of healthcare services to meet your needs.</p>
           </div>
-          <div className="mt-12 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-8">
+          <div className="mt-12 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-8  cxc">
             {[
               { icon: User, title: 'Personal Care', description: 'Tailored healthcare plans for your individual needs.' },
               { icon: Calendar, title: 'Easy Scheduling', description: 'Book appointments online or through our mobile app.' },
               { icon: Activity, title: 'Health Monitoring', description: 'Regular check-ups and health tracking services.' },
             ].map((feature) => (
-              <Card key={feature.title}>
+              <Card key={feature.title} className='csx'>
                 <CardHeader>
                   <feature.icon className="h-8 w-8 text-blue-500" />
                   <h3 className="mt-2 text-lg font-medium text-gray-900">{feature.title}</h3>
