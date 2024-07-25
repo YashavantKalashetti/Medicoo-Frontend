@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Container,
   Typography,
@@ -11,6 +12,8 @@ import {
   Box,
   Grid,
   Paper,
+  CircularProgress,
+  Alert,
   createTheme,
   ThemeProvider,
   useMediaQuery,
@@ -84,6 +87,9 @@ const PatientSignupForm = () => {
     password: '',
     address: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -102,9 +108,24 @@ const PatientSignupForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const response = await axios.post('http://localhost:3030/api/v1/auth/patient/signup', formData);
+      if (response.status === 200) {
+        setSuccess('Registration successful!');
+        setTimeout(() => {
+          window.location.href = 'http://localhost:5173/';
+        }, 2000);
+      }
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -115,6 +136,8 @@ const PatientSignupForm = () => {
           <FormTitle variant="h3" align="center">
             Patient Registration
           </FormTitle>
+          {error && <Alert severity="error">{error}</Alert>}
+          {success && <Alert severity="success">{success}</Alert>}
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
@@ -217,14 +240,20 @@ const PatientSignupForm = () => {
                 />
               </Grid>
             </Grid>
-              <SubmitButton
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="secondary"
-              >
-                Register
-              </SubmitButton>
+            <Box display="flex" justifyContent="center">
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <SubmitButton
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                >
+                  Register
+                </SubmitButton>
+              )}
+            </Box>
           </Box>
         </StyledPaper>
       </Container>

@@ -1,5 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Oregano:ital@0;1&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
+.text-custom_blue {
+    color: #007bff;
+  }
+  
+  .bg-custom_blue {
+    background-color: #007bff;
+  }
+  
+  .bg-gradient-to-r {
+    background-image: linear-gradient(to right, #f0f4ff, #cce6ff);
+  }
+  
+  .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rounded-lg {
+    border-radius: 0.5rem;
+  }
+  
+  h2 {
+    font-family: 'Inter, sans-serif';
+    font-weight: 700;
+    color: #007bff;
+  }
+  
+
+
 .pat_name{
     font-family: 'Urbanist', sans-serif;
     font-size: 20px;
@@ -90,31 +118,58 @@
     padding-bottom: 4px;
 }
 
-.medication-freq {
-    width:30px;
-    height: 30px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 13px; 
-    border-radius: 50%; 
-    background-color: #F1F5F9;
-    margin-left: 29px;
-    padding: 0; 
+.medicine-item {
+    background-color: #F8FAFC;
+    transition: transform 0.2s ease-in-out;
 }
 
-.durationx{
-    font-size: 12px;
-    font-weight: 500;
-    width:80px;
-    /* height: 60px;  */
+.medicine-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.medication-details {
+    flex-grow: 1;
+}
+
+.medication-name {
+    font-size: 16px;
+}
+
+.medication-dosage {
+    margin-top: 2px;
+}
+
+.medication-info {
+    display: flex;
+    gap: 16px;
+}
+
+.medication-freq {
+    width: 36px;
+    height: 36px; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    font-size: 13px; 
-    border-radius: 20px; 
-    border: 2px solid #d3d7db;
-    margin-left: 29px;
-    padding: 6px; 
-    
+    font-size: 14px; 
+    border-radius: 50%; 
+    background-color: #E2E8F0;
+    margin-left: 20px;
+    font-weight: 600;
+}
+
+.medication-duration {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: linear-gradient(135deg, #bebec2 0%, #dfe0f6 100%);
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }

@@ -28,13 +28,18 @@ import { CiMedicalCase } from "react-icons/ci";
 import { PiPillLight } from "react-icons/pi";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { Phone, Wifi } from 'lucide-react';
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 
 export default function Patient() {
 
     const [formattedDate, setFormattedDate] = useState('');
     const [patientgender, setPatientGender] = useState('');
     const [patientname, setPatientName] = useState('');
-    const [otherhealthdetails, setOtherHealthDetails] = useState(''); // [height, weight, blood pressure, heart rate, blood group, id]
+    const [otherhealthdetails, setOtherHealthDetails] = useState({}); // Ensure it's an object
+    const [medication, setMedications] = useState([]); // Ensure it's an array
+    // const [reports, setReports] = useState([]); // Ensure it's an array
+    const [appointments, setAppointments] = useState([]);// Ensure it's an array
 
     // dummy data
     const reports = [
@@ -63,87 +68,53 @@ export default function Patient() {
 
     // dummy data
 
-    const appointments = [
 
-        {
-            date: '12 March 2021',
-            consultation_type: 'In-Person',
-            reason: 'Admoninal Pain',
-            record: 'Download'
-        },
-        {
-            date: '12 March 2021',
-            consultation_type: 'In-Person',
-            reason: 'Fever',
-            record: 'Download'
-        },
-        {
-            date: '12 March 2021',
-            consultation_type: 'In-Person',
-            reason: 'Headache',
-            record: 'Download'
-        },
-    ]
+    const modeIcon = (mode) => {
+        switch (mode) {
+            case 'ONLINE':
+                return <Wifi className="text-blue-500" />;
+            case 'OFFLINE':
+                return <Phone className="text-green-500" />;
+            default:
+                return <AiOutlineCloseCircle className="text-red-500" />;
+        }
+    };
 
     // dummy data
 
-    const medications = [
-        {
-            name: 'Paracetamol',
-            dosage: '500mg',
-            frequency: 3,
-            duration: '3 days',
-            notes: 'After Meal'
-        },
-        {
-            name: 'Dolo',
-            dosage: '650mg',
-            frequency: 3,
-            duration: '1 Week',
-            notes: 'Before Bedtime'
-        },
-        {
-            name: 'Crocin',
-            dosage: '250mg',
-            frequency: 4,
-            duration: '2 months',
-            notes: 'After Breakfast'
-        },
-    ]
 
     // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MTIxNjYyNC1jZDhmLTRhYjYtYTg0MS0xNDI3NTY5ZTVmNDMiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnQ0NEBnbWFpbC5jb20iLCJpYXQiOjE3MTkwNDczOTIsImV4cCI6MTcxOTQ3OTM5Mn0.rxEF_31q1BGLIH0QV1FJXWSmT0l2sez6JHlbUXRGnuk'
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnQ0NEBnbWFpbC5jb20iLCJpYXQiOjE3MTkwNjYwOTEsImV4cCI6MTcxOTQ5ODA5MX0.0-maQD3nv24hBTGFqTzUK-iolbFNjTAz80plqIMjIzA';
-                const url = 'https://medicoo.onrender.com/api/v1/patient';
+                const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnQ0NEBnbWFpbC5jb20iLCJpYXQiOjE3MjE4ODYxOTQsImV4cCI6MTcyMjMxODE5NH0.9Wf20XeVfv8H9nfzlpveSZCIr1Z8B2Pu4jacPBtWflY';
+                const url = 'http://localhost:3030/api/v1/patient';
 
                 const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                // genral indo
+                console.log(response.data);
                 const patientData = response.data.patient;
                 setPatientName(patientData.name);
                 setPatientGender(patientData.gender);
+                setAppointments(response.data.appointments || []);
+
                 const formattedDate = new Date(patientData.dob).toLocaleDateString('en-GB', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric'
                 }).replace(/ /g, '-');
-
                 setFormattedDate(formattedDate);
 
+                setOtherHealthDetails(patientData.medicalDetails || {});
 
-                console.log("Patient Details:", patientData.name, formattedDate, patientData.gender);
-                console.log(response.data);
-
-                // other details
-                const medicalDetails = response.data.medicalDetails;
-                setOtherHealthDetails(medicalDetails);
-
+                setMedications(response.data.medications || []);
+                // console.log(response.data.medications);
+                // setReports(response.data.reports || []);
+                // setAppointments(response.data.appointments || []);
 
             } catch (error) {
                 console.error('There was an error making the request!', error);
@@ -152,6 +123,20 @@ export default function Patient() {
 
         fetchData();
     }, []);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because months are 0 indexed
+        const year = date.getFullYear().toString().substr(-2); // Get last 2 digits of year
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours.toString().padStart(2, '0') : '12'; // the hour '0' should be '12'
+        return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+    };
+
 
 
     return (
@@ -180,11 +165,11 @@ export default function Patient() {
                             <div className="metriccs mt-4 flex flex-wrap gap-5">
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Gender</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>{patientgender}</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{patientgender || "Male"}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Date of Birth</p>
-                                    <p className='text-base font-bold text-gray-700 px-1 age'>{formattedDate}</p>
+                                    <p className='text-base font-bold text-gray-700 px-1 age'>{formattedDate || "22 Feb 2003"}</p>
                                 </div>
                                 <div className="gender bg-slate-100 rounded-xl w-[135px] p-2">
                                     <p className='text-sm text-slate-500 head' >Blood Group</p>
@@ -259,7 +244,7 @@ export default function Patient() {
                                 </div>
                                 <div className="recent-report-list flex-1 mt-2 ml-6">
                                     {
-                                        reports.map((report, index) => (
+                                        (reports || []).map((report, index) => (
                                             <div className="report-table flex justify-between mr-4 gap-6 border-b-1" key={index}>
                                                 <div className="report_infos">
                                                     <p className='ph-headx'>{report.report_name}</p>
@@ -296,20 +281,21 @@ export default function Patient() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {
-                                            appointments.map((appointment, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell className="text-datex">{appointment.date}</TableCell>
-                                                    <TableCell className="text-datex">{appointment.consultation_type}</TableCell>
-                                                    <TableCell className="text-datex">{appointment.reason}</TableCell>
-                                                    <TableCell className="">
-                                                        <a href={appointment.record} download >
-                                                            <FiDownload className='ml-2' />
-                                                        </a>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))
-                                        }
+                                        {(appointments || []).map((appointment, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell className="text-datex">{formatDate(appointment.date)}</TableCell>
+                                                <TableCell className="text-datex flex items-center">
+                                                    {modeIcon(appointment.mode)}
+                                                    <span className="ml-2">{appointment.mode}</span>
+                                                </TableCell>
+                                                <TableCell className="text-datex">{appointment.reason}</TableCell>
+                                                <TableCell className="">
+                                                    <a href={appointment.record} download>
+                                                        <FiDownload className='ml-2 text-blue-600' />
+                                                    </a>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
                                     </TableBody>
                                 </Table>
                             </div>
@@ -328,7 +314,7 @@ export default function Patient() {
                                 </div>
                                 <div className="all-reports-icon">
                                     <Link to="/patient/medications">
-                                        <div className="lab-icon rounded-full p-3 bg-gray-100 mr-3 cursor-pointer transition duration-300 ease-in-out transform hover:bg-gray-200 hover:shadow-lg hover:scale-105">
+                                        <div className="lab-icon rounded-full p-3 mt-4 bg-gray-100 mr-3 cursor-pointer transition duration-300 ease-in-out transform hover:bg-gray-200 hover:shadow-lg hover:scale-105">
                                             <MdNorthEast className="transition duration-300 ease-in-out hover:text-gray-700" />
                                         </div>
                                     </Link>
@@ -337,26 +323,25 @@ export default function Patient() {
                             <p className='mt-4 ml-2 text-base font-bold text-gray-700 px-1 age ' >Current Medications (3)</p>
                             <div className="medicines-list mt-4">
                                 {
-                                    medications.map((medication, index) => (
-                                        <div className="medicines flex ml-2 mb-5 bg-slate-50 p-3 rounded-2xl items-center mr-6" key={index} >
-                                            <div className="lab-icon rounded-full  p-3 bg-violet-100 ">
+                                    (medication || []).map((medic, index) => (
+                                        <div className="medicine-item flex ml-2 mb-5 bg-white p-3 rounded-2xl items-center shadow-md" key={index}>
+                                            <div className="lab-icon rounded-full p-3 bg-violet-200">
                                                 <PiPillLight />
                                             </div>
-                                            <p className='ml-5 mr-2 ph-head' >{medication.name}</p>
-                                            <p className='text-sm -mt-1 text-slate-400'>{medication.dosage}</p>
-                                            <div className="medication-freq ">
-                                                {medication.frequency}x
+                                            <div className="medication-details ml-5">
+                                                <p className="medication-name font-semibold text-gray-700">{medic.medicine}</p>
+                                                <p className="medication-dosage text-sm text-gray-500">{medic.dosage}</p>
                                             </div>
-                                            <div className="medication-duration ml-2 text-sm durationx ">
-                                                {medication.duration}
-
+                                            <div className="medication-info flex items-center ml-auto">
+                                                <div className="medication-freq text-gray-700">{medic.numberOfTimes}x</div>
+                                                <div className="medication-duration text-gray-700">{medic.numberOfDays}</div>
                                             </div>
                                         </div>
-
                                     ))
                                 }
-
                             </div>
+
+
                         </div>
                     </div>
                 </div>

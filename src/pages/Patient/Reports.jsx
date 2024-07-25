@@ -48,7 +48,7 @@ const ReportOrganizer = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl mt-4">
       <h1 className="text-3xl font-bold text-center mb-8">Medical Reports</h1>
       
       <div className="mb-6 flex space-x-4">
