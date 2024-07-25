@@ -21,6 +21,7 @@ import HospitalProfile from './pages/Search/IndividualHospital';
 import HospitalDashboard from './pages/Hospital/HospitalDashboard';
 import GetCoordinates from './Location/GetCoordinates.jsx';
 import HealthcareLandingPage from './pages/LandingPage/LandingPage';
+import About from './pages/AboutPage';
 // import Medications from './pages/Medications';
 // import Appointments from './pages/Appointments';
 
@@ -30,11 +31,12 @@ function App() {
     <>
       <Router>
         <Routes>
+          
           <Route element={<Mainpage />} >
 
             <Route index element={<HealthcareLandingPage />} />
 
-            <Route path="/about" element={<h1>About</h1>} />
+            <Route path="/about" element={<About />} />
             <Route path="/services" element={<h1>About</h1>} />
 
 
