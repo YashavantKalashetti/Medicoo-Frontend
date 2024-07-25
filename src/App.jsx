@@ -22,6 +22,7 @@ import HospitalDashboard from './pages/Hospital/HospitalDashboard';
 import GetCoordinates from './Location/GetCoordinates.jsx';
 import HealthcareLandingPage from './pages/LandingPage/LandingPage';
 import About from './pages/AboutPage';
+import HospitalLocator from './pages/Search/HospitalLocator';
 // import Medications from './pages/Medications';
 // import Appointments from './pages/Appointments';
 
@@ -43,6 +44,7 @@ function App() {
             <Route path="/doctor" element={<DoctorSearchPage />} />
             <Route path="/hospitals" element={<HospitalList />} />
             <Route path="/hospitals/:id" element={<HospitalProfile />} />
+            <Route path='/emergency' element={<HospitalLocator />} />
 
 
             {/* Patient */}
