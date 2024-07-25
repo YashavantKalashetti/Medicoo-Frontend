@@ -6,23 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MailIcon, EyeIcon, EyeOffIcon, LockKeyhole, UserRoundCheck, Loader2 } from 'lucide-react';
-import { set } from 'react-hook-form';
-
-import { useToast } from "@/components/ui/use-toast"
-
-
-
-
-import.meta.env.VITE_BACKEND_URL
+import { useToast } from "@/components/ui/use-toast";
+import { message } from 'antd';
 
 import LoginImage from './LoginImage.jpg';
-
-// import CreateAccountButton from '@/Partials/CreateAccountButton';
 import CreateAccountLink from '@/Partials/CreateAccountLink';
 import ForgotPasswordLink from '@/Partials/ForgotPasswordLink';
-import { margin } from '@mui/system';
-import { ToastSimple } from '@/Partials/Toast';
-import { message } from 'antd';
 
 const MedicalSignupForm = () => {
   const [email, setEmail] = useState('');
@@ -31,13 +20,13 @@ const MedicalSignupForm = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast()
+  const { toast } = useToast();
   
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
-    console.log(import.meta.env.VITE_BACKEND_URL)
+    console.log(import.meta.env.VITE_BACKEND_URL);
 
     setError('');
     if (!email || !password || !userType) {
@@ -46,9 +35,8 @@ const MedicalSignupForm = () => {
       return;   
     }
 
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/${userType}/signin`, {
+      const response = await fetch(`http://localhost:3030/api/v1/auth/patient/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,22 +46,25 @@ const MedicalSignupForm = () => {
       });
 
       const data = await response.json();
+      console.log('Data:', data);
       if (!response.ok) {
         console.log('Error:->', data.message);
         message.error(data.message);
-      }else{
+      } else {
         console.log('Response:', data);
         message.success("Logged In successfully");
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'http://localhost:5173/';
+        }, 2000);
       }
-      
     } catch (error) {
-      message.error(error.message)
+      message.error(error.message);
       console.log('Error:', error.message);
-    }finally{
+    } finally {
       setLoading(false);
     }
-
-
   };
 
   const togglePasswordVisibility = () => {
@@ -85,17 +76,11 @@ const MedicalSignupForm = () => {
   };
 
   return (
-
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-pink-300 via-pink-200 to-yellow-200">
-    {/* <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 via-teal-300 to-green-200"> */}
-
       <div className="flex w-full max-w-4xl h-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Left side - Image */}
         <div className="w-1/2 h-auto">
           <img src="https://m.media-amazon.com/images/M/MV5BNjMwNDNkMzEtNzRmNy00YmExLTg3ZWYtM2NjMjFjNWY3MmM0XkEyXkFqcGdeQXVyMTY0Njc2MTUx._V1_FMjpg_UX1000_.jpg" alt="Medical Professional" className="object-cover w-full h-full" />
         </div>
-
-        {/* Right side - Form */}
         <div className="w-1/2">
           <Card className="bg-white shadow-none border-none" style={{margin: "20px 0"}} >
             <CardHeader className="space-y-1">
@@ -174,16 +159,11 @@ const MedicalSignupForm = () => {
                     </Button>
                   )
                 }
-                {/* <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                  Sign In
-                </Button> */}
               </form>
             </CardContent>
             <CardFooter className="flex justify-between px-8">
-              {/* <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">Forgot password?</a> */}
               <ForgotPasswordLink />
               <CreateAccountLink />
-              
             </CardFooter>
           </Card>
         </div>

@@ -21,12 +21,13 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs'; // Ensure dayjs is imported for date formatting
 import { styled } from '@mui/system';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#3f51b5',
+      main: '#2563EB',
     },
     secondary: {
       main: '#f50057',
@@ -114,15 +115,24 @@ const PatientSignupForm = () => {
     setError('');
     setSuccess('');
     try {
-      const response = await axios.post('http://localhost:3030/api/v1/auth/patient/signup', formData);
+      const submitData = {
+        ...formData,
+        aadharNumber: parseInt(formData.aadharNumber, 10),
+        contactNumber: parseInt(formData.contactNumber, 10),
+        gender: formData.gender.toUpperCase(),
+        dob: dayjs(formData.dob).format('YYYY-MM-DD'),
+      };
+      console.log("submitData : ", submitData);
+      const response = await axios.post('http://localhost:3030/api/v1/auth/patient/signup', submitData);
       if (response.status === 200) {
         setSuccess('Registration successful!');
         setTimeout(() => {
-          window.location.href = 'http://localhost:5173/';
+          window.location.href = '/patient';
         }, 2000);
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      console.error('Error during registration:', err);
+      setError('Registration failed. Please try again. ' + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -140,7 +150,7 @@ const PatientSignupForm = () => {
           {success && <Alert severity="success">{success}</Alert>}
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Full Name"
@@ -151,7 +161,7 @@ const PatientSignupForm = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Aadhar Number"
@@ -163,19 +173,19 @@ const PatientSignupForm = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Contact Number"
                   name="contactNumber"
-                  type="tel"
+                  type="number"
                   value={formData.contactNumber}
                   onChange={handleChange}
                   required
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth required variant="outlined">
                   <InputLabel>Gender</InputLabel>
                   <Select
@@ -184,13 +194,13 @@ const PatientSignupForm = () => {
                     onChange={handleChange}
                     label="Gender"
                   >
-                    <MenuItem value="male">Male</MenuItem>
-                    <MenuItem value="female">Female</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
+                    <MenuItem value="MALE">Male</MenuItem>
+                    <MenuItem value="FEMALE">Female</MenuItem>
+                    <MenuItem value="OTHER">Other</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Email Address"
@@ -202,7 +212,7 @@ const PatientSignupForm = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Date of Birth"
@@ -212,7 +222,7 @@ const PatientSignupForm = () => {
                   />
                 </LocalizationProvider>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Password"
@@ -225,7 +235,7 @@ const PatientSignupForm = () => {
                   inputProps={{ minLength: 8 }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Address"
@@ -240,7 +250,7 @@ const PatientSignupForm = () => {
                 />
               </Grid>
             </Grid>
-            <Box display="flex" justifyContent="center">
+            <Box display="flex" justifyContent="center" mt={3}>
               {loading ? (
                 <CircularProgress />
               ) : (

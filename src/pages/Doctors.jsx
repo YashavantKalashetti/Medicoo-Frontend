@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import CustomLoader from '@/Partials/CustomLoader';
 import { FaHeart, FaHeartbeat, FaSearch, FaStethoscope, FaUserMd, FaUsers } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const DEFAULT_AVATAR = "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png";
 
@@ -49,7 +50,7 @@ const DoctorCard = ({ doctor }) => (
           </motion.div>
         </div>
         <div className="p-4">
-          <h3 className="text-xl font-semibold text-gray-900 mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>{doctor.name}</h3>
+          <Link to={`/appointments/${doctor.id} `}> <h3 className="text-xl font-semibold text-gray-900 mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>{doctor.name}</h3></Link>
           <p className="text-sm font-medium text-custom_blue mb-2" style={{ fontFamily: 'Roboto, sans-serif' }}>{doctor.specialization.charAt(0).toUpperCase() + doctor.specialization.slice(1).toLowerCase()}</p>
           <div className="flex items-center mb-4">
             <Star className="w-5 h-5 text-yellow-400 mr-1" />
