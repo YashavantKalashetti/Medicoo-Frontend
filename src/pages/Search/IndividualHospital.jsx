@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,6 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Hospital, Phone, Mail, MapPin, Calendar, Star, GraduationCap, Languages, Clock, ChevronRight, Users, Map, ScrollText } from 'lucide-react';
 import MapComponent from '@/Auth/MapComponent';
+import { useParams } from 'react-router-dom';
+import { display } from '@mui/system';
 
 const hospital = {
   "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
@@ -52,6 +54,34 @@ const hospital = {
 };
 
 const HospitalProfile = () => {
+  const [hospital, setHospital] = useState(null);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (
+      async () => {
+        try {
+          setLoading(true);
+          console.log('Fetching hospital data:', id);
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/hospitals/${id}`);
+          const data = await response.json();
+          console.log('Hospital data:', data.hospital);
+          if(data.error) {
+            setError(data.error);
+            return;
+          }
+          setHospital(data.hospital);
+        } catch (error) {
+          console.error('Error fetching hospital data:', error);
+        }finally{
+          setLoading(false);
+        }
+      }
+    )()
+  }, []);
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -71,9 +101,18 @@ const HospitalProfile = () => {
     window.open(url, '_blank');
   };
 
+  if(error){
+    return <div className="container mx-auto p-4 space-y-6 mt-8 bg-red">Error</div>
+  }
+
+  if(loading){
+    return <div className="container mx-auto p-4 space-y-6 mt-8 bg-red">Loading...</div>
+  }
+
   return (
     <div className="container mx-auto p-4 space-y-6 mt-8 bg-red">
-      <Card className="w-full overflow-hidden">
+      {
+        hospital && <Card className="w-full overflow-hidden">
         <div className="relative h-64 md:h-96">
           <img 
             src={`https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=600`} 
@@ -86,10 +125,11 @@ const HospitalProfile = () => {
             <p className="text-sm md:text-base opacity-80">Hospital ID: {hospital.hospital_number}</p>
           </div>
           <Badge 
-            variant={hospital.availableForConsult ? "success" : "destructive"} 
+            variant={hospital.availableForConsult ? "" : "destructive"} 
             className="absolute top-4 right-4 text-sm"
+            style={{ backgroundColor: hospital.availableForConsult ? 'green' : 'red', display:"flex", alignItems:"center", justifyContent:"center", padding:"0.5rem", borderRadius:"0.5rem" }}
           >
-            {hospital.availableForConsult ? "Available for Consult" : "Not Available"}
+            {hospital.availableForConsult ? "Available" : "Unavailable"}
           </Badge>
         </div>
 
@@ -117,7 +157,7 @@ const HospitalProfile = () => {
                 <h3 className="text-lg flex items-center">
                   <ScrollText className='mr-2 h-6 w-7' /> About
                 </h3>
-                <p className="text-sm">{hospital.description}</p>
+                <p className="text-sm">{hospital.hospitalDescription}</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,6 +308,7 @@ const HospitalProfile = () => {
           </div>
         </CardContent>
       </Card>
+      }
     </div>
   );
 };

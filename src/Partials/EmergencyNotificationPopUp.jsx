@@ -14,6 +14,10 @@ const EmergencyNotificationSystem = () => {
   const [playAlert] = useSound(alertSound, { volume: 0.7});
   const draggleRef = useRef(null);
 
+  const [socket, setSocket] = useState(null);
+  const [socketOpen, setSocketOpen] = useState(false);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     // Simulated notifications (replace with actual WebSocket logic)
     // const timer1 = setTimeout(() => {
@@ -27,6 +31,40 @@ const EmergencyNotificationSystem = () => {
     // return () => {
     //   clearTimeout(timer1);
     // };
+
+    const newSocket = new WebSocket(`ws://localhost:8080/dedicatedMessages?userId=1234`);
+    setSocket(newSocket);
+
+    newSocket.onopen = () => {
+      console.log('WebSocket connection for doctor details opened');
+      setSocketOpen(true);
+    };
+
+    newSocket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log('Message from doctor details:', message);
+      handleNewNotification({
+              id: message.from,
+              title: 'Emergency Medical Alert',
+              message: message.data,
+            });
+      setError(null);
+    };
+
+    newSocket.onclose = (event) => {
+      console.log('WebSocket connection for doctor details closed:', event);
+      setSocketOpen(false);
+    };
+
+    newSocket.onerror = (error) => {
+      console.error('WebSocket error for doctor details:', error);
+      setError(error);
+    };
+
+    // return () => {
+    //   newSocket.close();
+    // };
+
   }, []);
 
   const handleNewNotification = useCallback((newNotification) => {

@@ -4,6 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import '../css/medications.css';
+import NotificationPusher from '@/Partials/NotificationPusher';
+import NotificationComponent from '@/Partials/NotificationPusher';
 
 const prescriptionData = [
   {
@@ -93,6 +95,8 @@ const MedicationCard = ({ medication }) => {
           </div>
         </div>
       </CardContent>
+
+      <NotificationComponent />
     </Card>
   );
 };
