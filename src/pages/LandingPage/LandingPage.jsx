@@ -130,19 +130,19 @@ const HealthcareLandingPage = () => {
 
   const testimonials = [
     {
-      name: "John Doe",
+      name: "Kushi",
       quote: "The care I received was exceptional. The staff was friendly and professional.",
       rating: 5,
       image: "https://i.pravatar.cc/150?img=1"
     },
     {
-      name: "Jane Smith",
+      name: "Yaksh",
       quote: "Booking an appointment was easy, and the wait times were minimal. Great experience!",
       rating: 4,
       image: "https://i.pravatar.cc/150?img=2"
     },
     {
-      name: "Sam Johnson",
+      name: "Mithun",
       quote: "The doctors are knowledgeable and take the time to listen. I highly recommend this clinic.",
       rating: 5,
       image: "https://i.pravatar.cc/150?img=3"
