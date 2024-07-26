@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, MinusIcon, UploadIcon, XIcon } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { message } from 'antd';
+import { set } from 'react-hook-form';
 
 const   PrescriptionForm = () => {
   const [medications, setMedications] = useState([]);
@@ -15,6 +17,7 @@ const   PrescriptionForm = () => {
   const [errors, setErrors] = useState({});
   const [fileTypeDialogOpen, setFileTypeDialogOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fileTypes = [
     "Blood Report",
@@ -28,6 +31,8 @@ const   PrescriptionForm = () => {
     "Other"
   ];
 
+  const patientId = "324b8295-bed1-4c08-a4ad-14fb268fde9e";
+
   const validateMedications = () => {
     const newErrors = {};
     medications.forEach((med, index) => {
@@ -39,16 +44,44 @@ const   PrescriptionForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (validateMedications()) {
-      const formData = new FormData(event.target);
-      const values = Object.fromEntries(formData.entries());
-      values.medications = medications;
-      values.attachments = attachments;
-      console.log('Submitted values:', values);
-      // Replace with your form submission logic
+  const onSubmit = async (event) => {
+    try {
+      setLoading(true);
+      event.preventDefault();
+      if (validateMedications()) {
+        const formData = new FormData(event.target);
+        const values = Object.fromEntries(formData.entries());
+        values.medications = medications;
+        values.attachments = attachments;
+
+        console.log('Submitted values:', values);
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor/patient/${patientId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzIwMTRjMy01YmMwLTRhMzAtOTQ5Ny01NzA4YjM1NzY2NzUiLCJyb2xlIjoiRE9DVE9SIiwiZW1haWwiOiJzdWpheUBnbWFpbC5jb20iLCJpYXQiOjE3MjE5NzE0MjAsImV4cCI6MTcyMjQwMzQyMH0.IDh_j8EaGeCY3HzEM2Dus25yv_vjNzX4J431PAGdBHU`
+          },
+          body: JSON.stringify(values)
+        })
+  
+        if(response.ok) {
+          message.success('Prescription submitted successfully!');
+          setMedications([]);
+          setAttachments([]);
+          event.target.reset();
+        } else {
+          message.error('Failed to submit prescription!');
+        }
+      }else{
+        message.error('Please fill all the fields');
+      }
+    } catch (error) {
+      message.error('Failed to submit prescription!');
+    }finally{
+      setLoading(false);
     }
+
   };
 
   const handleMedicationChange = (index, field, value) => {
