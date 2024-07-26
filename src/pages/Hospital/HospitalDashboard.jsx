@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Avatar, Typography, Divider, List, Tag, Tabs, Row, Col, Statistic, Timeline, Button, Space, Badge, Empty } from 'antd';
 import { PhoneOutlined, MailOutlined, EnvironmentOutlined, CalendarOutlined, TeamOutlined, StarOutlined, ClockCircleOutlined, UserOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -21,80 +21,130 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Link } from 'react-router-dom';
+import { set } from 'react-hook-form';
+import CustomLoader from '@/Partials/CustomLoader';
 
 
-const tempHospital = {
-  "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
-  "name": "BMS Hospital",
-  "hospital_number": "HS6045314",
-  "contactNumber": "8045088888",
-  "email": "bms@email.com",
-  "address": "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
-  "description": "MBBS, MS (General Surgery), M.Ch (Cardiothoracic Surgery), Fellowship in Heart & Lung transplant, Hannover Medical School, Fellowship in Minimally Invasive Cardiac Surgery, Lipzig Heart Centre, Germany",
-  "speciality": "SUPER_SPECIALTY",
-  "latitude": 12.9411334,
-  "longitude": 77.5649215,
-  "availableForConsult": false,
-  "createdAt": "2024-06-22T11:56:44.462Z",
-  "updatedAt": "2024-06-28T13:29:36.886Z",
-  "registeredDoctors": [
-      {
-          "id": "002c94b1-8313-4528-a164-c4269ccca19c",
-          "name": "Kavya Reddy",
-          "email": "kavya.reddy@example.com",
-          "contactNumber": "9812341234",
-          "specialization": "ENDOCRINOLOGIST",
-          "address": "JP Nagar, Bangalore",
-          "rating": 0,
-          "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-      },
-      {
-          "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
-          "name": "Yagya",
-          "email": "yagyabhatt@gmail.com",
-          "contactNumber": "8185626810",
-          "specialization": "CARDIOLOGIST",
-          "address": "Jaksandra extension, KKormangala",
-          "rating": 0,
-          "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-      }
-  ],
-  "registeredPatients": []
-}
-const todayAppointment = []
-const previousAppointments = []
-const registeredDoctors = [
-  {
-      "id": "002c94b1-8313-4528-a164-c4269ccca19c",
-      "name": "Kavya Reddy",
-      "email": "kavya.reddy@example.com",
-      "contactNumber": "9812341234",
-      "specialization": "ENDOCRINOLOGIST",
-      "address": "JP Nagar, Bangalore",
-      "rating": 0,
-      "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-  },
-  {
-      "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
-      "name": "Yagya",
-      "email": "yagyabhatt@gmail.com",
-      "contactNumber": "8185626810",
-      "specialization": "CARDIOLOGIST",
-      "address": "Jaksandra extension, KKormangala",
-      "rating": 0,
-      "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-  }
-]
-const patientsCount = 0
-const emergencyAppointments = [{}]
+// const tempHospital = {
+//   "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
+//   "name": "BMS Hospital",
+//   "hospital_number": "HS6045314",
+//   "contactNumber": "8045088888",
+//   "email": "bms@email.com",
+//   "address": "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
+//   "description": "MBBS, MS (General Surgery), M.Ch (Cardiothoracic Surgery), Fellowship in Heart & Lung transplant, Hannover Medical School, Fellowship in Minimally Invasive Cardiac Surgery, Lipzig Heart Centre, Germany",
+//   "speciality": "SUPER_SPECIALTY",
+//   "latitude": 12.9411334,
+//   "longitude": 77.5649215,
+//   "availableForConsult": false,
+//   "createdAt": "2024-06-22T11:56:44.462Z",
+//   "updatedAt": "2024-06-28T13:29:36.886Z",
+//   "registeredDoctors": [
+//       {
+//           "id": "002c94b1-8313-4528-a164-c4269ccca19c",
+//           "name": "Kavya Reddy",
+//           "email": "kavya.reddy@example.com",
+//           "contactNumber": "9812341234",
+//           "specialization": "ENDOCRINOLOGIST",
+//           "address": "JP Nagar, Bangalore",
+//           "rating": 0,
+//           "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
+//       },
+//       {
+//           "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
+//           "name": "Yagya",
+//           "email": "yagyabhatt@gmail.com",
+//           "contactNumber": "8185626810",
+//           "specialization": "CARDIOLOGIST",
+//           "address": "Jaksandra extension, KKormangala",
+//           "rating": 0,
+//           "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
+//       }
+//   ],
+//   "registeredPatients": []
+// }
+// const todayAppointment = []
+// const previousAppointments = []
+// const registeredDoctors = [
+//   {
+//       "id": "002c94b1-8313-4528-a164-c4269ccca19c",
+//       "name": "Kavya Reddy",
+//       "email": "kavya.reddy@example.com",
+//       "contactNumber": "9812341234",
+//       "specialization": "ENDOCRINOLOGIST",
+//       "address": "JP Nagar, Bangalore",
+//       "rating": 0,
+//       "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
+//   },
+//   {
+//       "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
+//       "name": "Yagya",
+//       "email": "yagyabhatt@gmail.com",
+//       "contactNumber": "8185626810",
+//       "specialization": "CARDIOLOGIST",
+//       "address": "Jaksandra extension, KKormangala",
+//       "rating": 0,
+//       "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
+//   }
+// ]
+// const patientsCount = 0
+// const emergencyAppointments = [{}]
 
 const HospitalDashboard = () => {
 
   const [activeTab, setActiveTab] = useState('1');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [hospital, setHospital] = useState();
+  const [registeredDoctors, setRegisteredDoctors] = useState([]);
+  const [todayAppointment, setTodayAppointment] = useState([]);
+  const [previousAppointments, setPreviousAppointments] = useState([]);
+  const [patientsCount, setPatientsCount] = useState(0);
+  const [emergencyAppointments, setEmergencyAppointments] = useState([]);
 
-  const [hospital, setHospital] = useState(tempHospital);
+  useEffect(() => {
+    fetchHospital();
+  }, []);
+  
 
-  const toggleAvailability = () => {
+  const fetchHospital = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching hospital data")
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
+        },
+      });
+      if(response.status >= 400) {
+        setError('Unable to fetch hospital data');
+        return
+      }
+      const data = await response.json();
+      setHospital(data.hospital);
+      setRegisteredDoctors(data.registeredDoctors);
+      setTodayAppointment(data.todayAppointment);
+      setPreviousAppointments(data.previousAppointments);
+      setPatientsCount(data.patientsCount);
+      setEmergencyAppointments(data.emergencyAppointments);
+    } catch (error) {
+      setError('Unable to fetch hospital data');
+    }finally{
+      setLoading(false);
+    }
+  
+  };
+
+  const toggleAvailability = async () => {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital/setAvailability?availability=${!hospital.availableForConsult}`,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
+      },
+    })
     setHospital(prevHospital => ({
       ...prevHospital,
       availableForConsult: !prevHospital.availableForConsult
@@ -113,9 +163,19 @@ const HospitalDashboard = () => {
     </Card>
   );
 
+  if(loading) {
+    return <div className='flex justify-center items-center h-screen'><CustomLoader /></div>
+  }
+
+  if(error) {
+    return <div className='flex justify-center items-center h-screen'>Error: {error}</div>
+  }
+
   return (
     <div style={{ padding: '20px', marginTop:"20px", backgroundColor: '#f0f2f5' }}>
-      <Row gutter={[16, 16]}>
+      {
+        hospital && 
+        <Row gutter={[16, 16]}>
         <Col span={24}>
           <div className="relative h-64 md:h-96">
           <img 
@@ -304,6 +364,7 @@ const HospitalDashboard = () => {
           </Card>
         </Col>
       </Row>
+      }
     </div>
   );
 };
