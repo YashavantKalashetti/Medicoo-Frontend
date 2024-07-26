@@ -62,20 +62,20 @@ const About = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20"
+          className="grid grid-cols-1 cursor-pointer md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20"
         >
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              className={`p-8 rounded-xl shadow-lg ${
+              className={`p-8 rounded-xl  cursor-pointer shadow-lg ${
                 activeTab === feature.tab ? 'bg-blue-600 text-white' : 'bg-white'
               }`}
-              whileHover={{ scale: 1.05 ,cursor:'pointer'}}
-              transition={{ type: 'spring', stiffness: 300 }}
+              // whileHover={{ scale: 1.05 ,cursor:'pointer'}}
+              // transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => setActiveTab(feature.tab)}
             >
-              <feature.icon className={`h-16 w-16 mb-6 ${activeTab === feature.tab ? 'text-white' : 'text-blue-600'}`} />
-              <h3 className={`text-xl font-bold mb-4 ${activeTab === feature.tab ? 'text-white' : 'text-blue-900'}`}>
+              <feature.icon className={`h-16 w-16 cursor-pointer mb-6 ${activeTab === feature.tab ? 'text-white' : 'text-blue-600'}`} />
+              <h3 className={`text-xl font-bold mb-4 cursor-pointer ${activeTab === feature.tab ? 'text-white' : 'text-blue-900'}`}>
                 {feature.title}
               </h3>
               <p className={`${activeTab === feature.tab ? 'text-blue-100' : 'text-blue-700'} leading-relaxed`}>{feature.description}</p>

@@ -13,7 +13,6 @@ const HospitalLocator = () => {
   const [permissionDenied, setPermissionDenied] = useState(false);
   const navigate = useNavigate();
 
-
   const fetchHospitals = async (latitude, longitude) => {
     try {
       const response = await fetch(`http://localhost:3030/api/v1/search/nearby-hospitals?latitude=${latitude}&longitude=${longitude}`);
@@ -63,71 +62,92 @@ const HospitalLocator = () => {
   }, []);
 
   return (
-    <div className="p-4 mx-auto mt-5">
-      <h1 className="text-2xl font-bold mb-4">Hospital Locator</h1>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="bg-gradient-to-b mt-8 mb-10 min-h-screen p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-blue-900 text-center">Hospital Locator</h1>
+        
         {location && (
-          <p className="m-5">
-            Coordinates : {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-          </p>
-        )}
+  <div className=" rounded-lg shadow-md p-6 mb-8">
+    <h2 className="text-xl font-semibold text-blue-800 mb-2">Your Location</h2>
+    <div className="flex items-center justify-center space-x-4">
+      <div className="flex flex-col items-center">
+        <span className="text-sm text-blue-600 font-medium">Latitude</span>
+        <span className="text-lg font-bold text-blue-900">{location.latitude.toFixed(4)}°</span>
       </div>
+      <div className="w-px h-10 bg-blue-300"></div>
+      <div className="flex flex-col items-center">
+        <span className="text-sm text-blue-600 font-medium">Longitude</span>
+        <span className="text-lg font-bold text-blue-900">{location.longitude.toFixed(4)}°</span>
+      </div>
+    </div>
+  </div>
+)}
 
-      {loading && (
-        <div className="flex justify-center">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-500" />
-        </div>
-      )}
+        {loading && (
+          <div className="flex justify-center my-8">
+            <Loader2 className="animate-spin h-12 w-12 text-blue-500" />
+          </div>
+        )}
 
-      {error && (
-        <Alert variant="destructive" className="mt-4">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        {error && (
+          <Alert variant="destructive" className="mb-8">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      {permissionDenied && (
-        <div className="mt-4 flex justify-center">
-          <Button onClick={handleGeolocation}>Enable Location Access</Button>
-        </div>
-      )}
+        {permissionDenied && (
+          <div className="text-center mb-8">
+            <Button onClick={handleGeolocation} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+              Enable Location Access
+            </Button>
+          </div>
+        )}
 
-      {hospitals.length > 0 && (
-        <div className="mt-4 space-y-4">
-          {hospitals.map((hospital) => (
-            
-              <div className="p-4" style={{ border: '1px solid black', background: "#f4f4f4" }}>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-2xl justify-between">
+        {hospitals.length > 0 && (
+          <div className="space-y-6">
+            {hospitals.map((hospital) => (
+              <Card key={hospital.id} className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="bg-blue-50">
+                  <CardTitle className="flex items-center justify-between text-2xl text-blue-900">
                     <span className="flex items-center">
-                      <Hospital style={{ color: "#4186E6" }} className="mr-2" />
+                      <Hospital className="mr-3 text-blue-600" />
                       {hospital.name}
                     </span>
-                    <div style={{display:"flex", padding:"3px", justifyContent:"space-around"}}>
-
-                    <button onClick={()=> navigate(`/hospitals/${hospital.id}`)} className='m-1' style={{borderRadius: "50%", padding: "8px", background:"#7092DE" }}>
-                        <Navigation className='' />
-                    </button>
-                        
-                        <button  className='m-1' style={{ border: "0px solid black", borderRadius: "50%", padding: "7px", background:"#f75445" }}>
-                            <BellRing style={{color:"white"}} />
-                        </button>
-                        </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        onClick={() => navigate(`/hospitals/${hospital.id}`)}
+                        className="bg-blue-500 hover:bg-blue-600 p-2 rounded-full"
+                      >
+                        <Navigation className="text-white" />
+                      </Button>
+                      <Button className="bg-red-500 hover:bg-red-600 p-2 rounded-full">
+                        <BellRing className="text-white" />
+                      </Button>
+                    </div>
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent>
-                  <p className="flex items-center mb-2"><Phone className="mr-2" /> {hospital.contactNumber}</p>
-                  <p className="flex items-center mb-2"><Mail className="mr-2" /> {hospital.email}</p>
-                  <p className="flex items-center mb-2"><MapPin className="mr-2" /> {hospital.address}</p>
-                  <p className="flex items-center">
-                    <Stethoscope className="mr-2" />
-                    {hospital.speciality}
-                  </p>
+                <CardContent className="mt-4">
+                  <div className="space-y-3">
+                    <p className="flex items-center text-gray-700">
+                      <Phone className="mr-3 text-blue-500" /> {hospital.contactNumber}
+                    </p>
+                    <p className="flex items-center text-gray-700">
+                      <Mail className="mr-3 text-blue-500" /> {hospital.email}
+                    </p>
+                    <p className="flex items-center text-gray-700">
+                      <MapPin className="mr-3 text-blue-500" /> {hospital.address}
+                    </p>
+                    <p className="flex items-center text-gray-700">
+                      <Stethoscope className="mr-3 text-blue-500" /> {hospital.speciality}
+                    </p>
+                  </div>
                 </CardContent>
-              </div>
-          ))}
-        </div>
-      )}
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
