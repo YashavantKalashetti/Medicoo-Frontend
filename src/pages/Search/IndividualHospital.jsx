@@ -10,6 +10,7 @@ import { Hospital, Phone, Mail, MapPin, Calendar, Star, GraduationCap, Languages
 import MapComponent from '@/Auth/MapComponent';
 import { useParams } from 'react-router-dom';
 import { display } from '@mui/system';
+import CustomLoader from '@/Partials/CustomLoader';
 
 const hospital = {
   "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
@@ -106,7 +107,7 @@ const HospitalProfile = () => {
   }
 
   if(loading){
-    return <div className="container mx-auto p-4 space-y-6 mt-8 bg-red">Loading...</div>
+    return <div className='flex justify-center items-center h-screen'><CustomLoader /></div>;
   }
 
   return (
