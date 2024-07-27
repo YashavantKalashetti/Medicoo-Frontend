@@ -9,14 +9,11 @@ import { FaUserMd, FaCalendarAlt, FaLanguage, FaGraduationCap, FaClock, FaDollar
 import { MdLocalHospital } from 'react-icons/md';
 import { IoMdArrowForward } from 'react-icons/io';
 import { FiEdit2 } from 'react-icons/fi';
-
-
+import { Link } from 'react-router-dom';
 
 const COLORS = ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'];
 
 const DoctorDashboard = () => {
-
-
   const doctorData = {
     doctor: {
       id: "772014c3-5bc0-4a30-9497-5708b3576675",
@@ -47,6 +44,12 @@ const DoctorDashboard = () => {
           address: "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
           contactNumber: "8045088888",
           email: "bms@email.com"
+        },
+        {
+          name: "City General Hospital",
+          address: "456 Health Avenue, Metropolis, India",
+          contactNumber: "9876543210",
+          email: "citygeneral@email.com"
         }
       ]
     },
@@ -150,16 +153,7 @@ const DoctorDashboard = () => {
         hospitalId: "1a2b3c4d"
       }
     ],
-    registeredHospitals: [
-      {
-        name: "BMS Hospital",
-        address: "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
-        contactNumber: "8045088888",
-        email: "bms@email.com"
-      }
-    ]
   };
-
 
   const { doctor, onlineAppointments, offlineAppointments } = doctorData;
 
@@ -174,188 +168,183 @@ const DoctorDashboard = () => {
   const allAppointments = [...onlineAppointments, ...offlineAppointments]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 4);
+
   return (
-    <>
-      {/* Add Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"></link>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div className="p-4 sm:p-6 md:p-8 bg-gradient-to-br from-background to-secondary/10 min-h-screen font-sans">
+      <motion.div
+        className="max-w-7xl mx-auto"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 mb-8 sm:mb-12">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary">Welcome back, Dr. {doctor.name}</h1>
+            <p className="text-secondary-foreground mt-2">Here's what's happening with your appointments today.</p>
+          </div>
+        </header>
 
-      <div className="p-8 bg-gradient-to-br mt-8 min-h-screen font-poppins mb-20">
-        <motion.div
-          className="max-w-7xl mx-auto"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <header className="flex justify-between items-center mb-12">
-            <div>
-              <h1 className="text-4xl font-bold text-indigo-900">Welcome back, Dr. {doctor.name}</h1>
-              <p className="text-indigo-600 mt-2">Here's what's happening with your appointments today.</p>
-            </div>
-            {/* <Avatar className="h-16 w-16 ring-4 ring-white shadow-lg">
-              <AvatarImage src={doctor.avatar} />
-              <AvatarFallback>{doctor.name[0]}</AvatarFallback>
-            </Avatar> */}
-          </header>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <motion.div
-              className="lg:col-span-2 space-y-8"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Card className="bg-white shadow-lg rounded-xl overflow-hidden font-roboto">
-                <CardContent className="p-8">
-                  <motion.div
-                    className="flex justify-between items-start mb-8"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                  >
-                    <div className="flex items-center">
-                      <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <Avatar className="h-20 w-20 border-4 border-indigo-100 mr-6">
-                          <AvatarImage src={"pexels-shkrabaanthony-5215024.jpg"||doctor.avatar} />
-                          <AvatarFallback>{doctor.name[0]}</AvatarFallback>
-                        </Avatar>
-                      </motion.div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-1">Dr. {doctor.name}</h2>
-                        <p className="text-indigo-600 font-medium text-lg">{doctor.specialization}</p>
-                      </div>
-                    </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <motion.div
+            className="lg:col-span-2 space-y-6 sm:space-y-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="overflow-hidden">
+              <CardContent className="p-6 sm:p-8">
+                <motion.div
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                  <div className="flex items-center mb-4 sm:mb-0">
                     <motion.div
                       whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-gray-400 hover:text-indigo-600 hover:bg-indigo-50"
-                        onClick={() => {/* Handle edit functionality */ }}
-                      >
-                        <FiEdit2 className="h-5 w-5" />
-                      </Button>
+                      <Avatar className="h-16 sm:h-20 w-16 sm:w-20 border-4 border-primary/10 mr-4 sm:mr-6">
+                        <AvatarImage src={doctor.avatar} alt={doctor.name} />
+                        <AvatarFallback>{doctor.name[0]}</AvatarFallback>
+                      </Avatar>
                     </motion.div>
-                  </motion.div>
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-primary mb-1">Dr. {doctor.name}</h2>
+                      <p className="text-secondary-foreground font-medium text-base sm:text-lg">{doctor.specialization}</p>
+                    </div>
+                  </div>
                   <motion.div
-                    className="grid grid-cols-2 md:grid-cols-3 gap-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <InfoItem icon={FaUserMd} label="Specialization" value={doctor.specialization} />
-                    <InfoItem icon={FaCalendarAlt} label="Practicing Since" value={new Date(doctor.practicingSince).getFullYear()} />
-                    <InfoItem icon={FaLanguage} label="Languages" value={doctor.languages.join(', ')} />
-                    <InfoItem icon={FaGraduationCap} label="Education" value={doctor.education} />
-                    <InfoItem icon={FaClock} label="Available Time" value={`${doctor.availableStartTime} - ${doctor.availableEndTime}`} />
-                    <InfoItem icon={FaDollarSign} label="Consulting Fees" value={`₹${doctor.consultingFees}`} />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+                      onClick={() => {/* Handle edit functionality */}}
+                    >
+                      <FiEdit2 className="h-5 w-5" />
+                    </Button>
                   </motion.div>
-                </CardContent>
-              </Card>
+                </motion.div>
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  <InfoItem icon={FaUserMd} label="Specialization" value={doctor.specialization} />
+                  <InfoItem icon={FaCalendarAlt} label="Practicing Since" value={new Date(doctor.practicingSince).getFullYear()} />
+                  <InfoItem icon={FaLanguage} label="Languages" value={doctor.languages.join(', ')} />
+                  <InfoItem icon={FaGraduationCap} label="Education" value={doctor.education} />
+                  <InfoItem icon={FaClock} label="Available Time" value={`${doctor.availableStartTime} - ${doctor.availableEndTime}`} />
+                  <InfoItem icon={FaDollarSign} label="Consulting Fees" value={`₹${doctor.consultingFees}`} />
+                </motion.div>
+              </CardContent>
+            </Card>
 
-              <Card className="overflow-hidden bg-white shadow-lg rounded-2xl hover:shadow-xl transition-shadow duration-300">
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold text-indigo-900">Recent Appointments</h2>
-                    <Button variant="outline" className="text-indigo-600 hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-300">
+            <Card className="overflow-hidden">
+              <div className="p-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-4 sm:mb-0">Recent Appointments</h2>
+                  <Link to="/doctor/appointments">
+                    <Button variant="outline" className="text-primary hover:bg-primary/10 hover:text-primary transition-colors duration-300">
                       View All <IoMdArrowForward className="ml-2" />
                     </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {allAppointments.map((appointment, index) => (
-                      <motion.div
-                        key={appointment.id}
-                        className="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-indigo-50 transition-colors duration-300"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                      >
-                        <Avatar className="h-12 w-12 mr-4">
-                          <AvatarImage src={`https://i.pravatar.cc/48?img=${index + 1}`} />
-                          <AvatarFallback>{appointment.reason[0]}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-grow">
-                          <div className="font-medium text-indigo-900">{appointment.reason}</div>
-                          <div className="text-sm text-indigo-600">
-                            {new Date(appointment.date).toLocaleString()}
-                          </div>
+                  </Link>
+                </div>
+                <div className="space-y-4">
+                  {allAppointments.map((appointment, index) => (
+                    <motion.div
+                      key={appointment.id}
+                      className="flex items-center p-4 bg-secondary/50 rounded-xl hover:bg-secondary transition-colors duration-300"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                    >
+                      <Avatar className="h-12 w-12 mr-4">
+                        <AvatarImage src={`https://i.pravatar.cc/48?img=${index + 1}`} alt="Patient" />
+                        <AvatarFallback>{appointment.reason[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-grow">
+                        <div className="font-medium text-primary">{appointment.reason}</div>
+                        <div className="text-sm text-secondary-foreground">
+                          {new Date(appointment.date).toLocaleString()}
                         </div>
-                        <Badge variant={appointment.mode === 'ONLINE' ? 'default' : 'secondary'} className="ml-2">
-                          {appointment.mode}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Card className="overflow-hidden bg-white shadow-lg rounded-2xl hover:shadow-xl transition-shadow duration-300">
-                <div className="p-6">
-                  <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Appointment Overview</h2>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    {pieData.map((entry, index) => (
-                      <div key={entry.name} className="flex items-center">
-                        <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                        <span className="text-sm text-indigo-700">{entry.name}: {entry.value}</span>
                       </div>
-                    ))}
-                  </div>
+                      <Badge variant={appointment.mode === 'ONLINE' ? 'default' : 'secondary'} className="ml-2">
+                        {appointment.mode}
+                      </Badge>
+                    </motion.div>
+                  ))}
                 </div>
-              </Card>
+              </div>
+            </Card>
+          </motion.div>
 
-              <Card className="overflow-hidden bg-white shadow-lg rounded-2xl hover:shadow-xl transition-shadow duration-300">
-                <div className="p-6">
-                  <h2 className="text-2xl font-semibold text-indigo-900 mb-4">Affiliated Hospital</h2>
-                  <div className="flex items-center mb-4">
-                    <MdLocalHospital className="text-indigo-500 mr-3" size={28} />
-                    <h3 className="text-xl font-semibold text-indigo-800">{doctor.affiliatedHospitals[0].name}</h3>
-                  </div>
-                  <p className="text-indigo-700 mb-2">{doctor.affiliatedHospitals[0].address}</p>
-                  <p className="text-indigo-700">
-                    <span className="font-medium">Contact:</span> {doctor.affiliatedHospitals[0].contactNumber}
-                  </p>
-                  <p className="text-indigo-700">
-                    <span className="font-medium">Email:</span> {doctor.affiliatedHospitals[0].email}
-                  </p>
+          <motion.div
+            className="space-y-6 sm:space-y-8"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Card className="overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-4">Appointment Overview</h2>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  {pieData.map((entry, index) => (
+                    <div key={entry.name} className="flex items-center">
+                      <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                      <span className="text-sm text-secondary-foreground">{entry.name}: {entry.value}</span>
+                    </div>
+                  ))}
                 </div>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
-    </>
+              </div>
+            </Card>
+
+            <Card className="overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-4">Affiliated Hospitals</h2>
+                {doctor.affiliatedHospitals.map((hospital, index) => (
+                  <div key={index} className="mb-6 last:mb-0">
+                    <div className="flex items-center mb-2">
+                      <MdLocalHospital className="text-primary mr-3" size={24} />
+                      <h3 className="text-lg font-semibold text-primary">{hospital.name}</h3>
+                    </div>
+                    <p className="text-secondary-foreground mb-1">{hospital.address}</p>
+                    <p className="text-secondary-foreground">
+                      <span className="font-medium">Contact:</span> {hospital.contactNumber}
+                    </p>
+                    <p className="text-secondary-foreground">
+                      <span className="font-medium">Email:</span> {hospital.email}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
-
-
 
 const InfoItem = ({ icon: Icon, label, value }) => (
   <motion.div
@@ -363,10 +352,10 @@ const InfoItem = ({ icon: Icon, label, value }) => (
     whileHover={{ scale: 1.05 }}
     transition={{ type: "spring", stiffness: 400, damping: 10 }}
   >
-    <Icon className="text-indigo-500 flex-shrink-0" size={24} />
+    <Icon className="text-primary flex-shrink-0" size={24} />
     <div>
-      <p className="text-sm font-medium text-gray-500 mb-1">{label}</p>
-      <p className="text-base font-semibold text-gray-700">{value}</p>
+      <p className="text-sm font-medium text-muted-foreground mb-1">{label}</p>
+      <p className="text-base font-semibold text-foreground">{value}</p>
     </div>
   </motion.div>
 );

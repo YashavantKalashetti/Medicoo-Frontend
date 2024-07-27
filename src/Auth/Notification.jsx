@@ -12,16 +12,16 @@ const NotificationComponent = () => {
 
   useEffect(() => {
     // Connect to WebSocket
-    ws.current = new WebSocket('wss://localhost:3030/notify');
+    // ws.current = new WebSocket('wss://localhost:3030/notify');
 
-    ws.current.onmessage = (event) => {
-      const newNotification = JSON.parse(event.data);
-      setNotifications(prev => [...prev, { ...newNotification, read: false }]);
-    };
+    // ws.current.onmessage = (event) => {
+    //   const newNotification = JSON.parse(event.data);
+    //   setNotifications(prev => [...prev, { ...newNotification, read: false }]);
+    // };
 
-    return () => {
-      if (ws.current) ws.current.close();
-    };
+    // return () => {
+    //   if (ws.current) ws.current.close();
+    // };
   }, []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -42,13 +42,13 @@ const NotificationComponent = () => {
   };
 
   return (
-    <div className="relative z-50">
+    <div className="z-50">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-blue-500 text-white rounded-full fixed"
-        style={{ top: '1.5vh', right: '3.1vw' }}
+        className="p-2 bg-blue-500 text-white rounded-full relative"
+        style={{margin:"2px"}}
       >
-        <Bell size={23} />
+        <Bell size={24} />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}

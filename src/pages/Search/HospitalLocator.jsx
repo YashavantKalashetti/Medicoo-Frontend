@@ -58,18 +58,60 @@ const HospitalLocator = () => {
     }
   };
 
+  const sendNotification = async (hospitalId) => {
+    if(notifying){
+      window.alert('Notification currently in progress');
+      return;
+    }
+    try {
+      if(!patientId){
+        message.info('Please Login in. It would be easy to locate and get your details.')
+      }
+      setNotifying(true);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/emergency-consult`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          hospitalId,
+          patientId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to send notification');
+      }
+      const data = await response.json();
+      console.log(data);
+      if(data.message.includes('offline') || data.message.includes('unreachable') || data.message.includes('not')){
+        message.error(data.message);
+      }else{
+        message.success(data.msg);
+      }
+    } catch (error) {
+      message.error(`Hospital could not be alerted`);
+    }finally{
+      setNotifying(false);
+      // console.log('Notification sent');
+      // console.log(notifying);
+    }
+  }
+
   useEffect(() => {
     handleGeolocation();
   }, []);
+
 
   return (
     <div className="p-4 mx-auto mt-5">
       <h1 className="text-2xl font-bold mb-4">Hospital Locator</h1>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         {location && (
-          <p className="m-5">
-            Coordinates : {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-          </p>
+          <h3 style={{fontSize:"25px"}} className="m-5">
+          Coordinates : {location.latitude}, {location.longitude}
+        </h3>
         )}
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,10 @@ import { message } from 'antd';
 import LoginImage from './LoginImage.jpg';
 import CreateAccountLink from '@/Partials/CreateAccountLink';
 import ForgotPasswordLink from '@/Partials/ForgotPasswordLink';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '@/context/AuthContext';
 
-const MedicalSignupForm = () => {
+const MedicalSignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('');
@@ -21,6 +23,12 @@ const MedicalSignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const {dispatch} = useContext(AuthContext);
+
   
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -36,7 +44,7 @@ const MedicalSignupForm = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3030/api/v1/auth/patient/signin`, {
+      const response = await fetch(`http://localhost:3030/api/v1/auth/${userType}/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,18 +54,12 @@ const MedicalSignupForm = () => {
       });
 
       const data = await response.json();
-      console.log('Data:', data);
       if (!response.ok) {
-        console.log('Error:->', data.message);
         message.error(data.message);
       } else {
-        console.log('Response:', data);
         message.success("Logged In successfully");
-
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          window.location.href = 'http://localhost:5173/';
-        }, 2000);
+        dispatch({type: 'LOGIN', payload: data})
+        navigate(from, { replace: true });
       }
     } catch (error) {
       message.error(error.message);
@@ -172,4 +174,4 @@ const MedicalSignupForm = () => {
   );
 };
 
-export default MedicalSignupForm;
+export default MedicalSignInForm;

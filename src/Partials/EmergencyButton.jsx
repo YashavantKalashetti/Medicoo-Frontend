@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Siren, X } from 'lucide-react';
+import { Popover } from 'antd';
+
+const style= {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
 
 const NotificationComponent = () => {
   const [notifications, setNotifications] = useState([
@@ -11,18 +18,20 @@ const NotificationComponent = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const ws = useRef(null);
 
+  
+
   useEffect(() => {
     // Connect to WebSocket
-    ws.current = new WebSocket('wss://localhost:3030/notify');
+    // ws.current = new WebSocket('wss://localhost:3030/notify');
 
-    ws.current.onmessage = (event) => {
-      const newNotification = JSON.parse(event.data);
-      setNotifications(prev => [...prev, { ...newNotification, read: false }]);
-    };
+    // ws.current.onmessage = (event) => {
+    //   const newNotification = JSON.parse(event.data);
+    //   setNotifications(prev => [...prev, { ...newNotification, read: false }]);
+    // };
 
-    return () => {
-      if (ws.current) ws.current.close();
-    };
+    // return () => {
+    //   if (ws.current) ws.current.close();
+    // };
   }, []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -44,18 +53,18 @@ const NotificationComponent = () => {
 
   return (
     <div className="relative z-50">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-blue-500 text-white rounded-full fixed"
-        style={{ top: '1.5vh', right: '3.1vw', zIndex: isOpen ? '100' : '10' }}
-      >
-        <Bell size={23} />
-        {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
-            {unreadCount}
-          </span>
-        )}
-      </button>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 bg-blue-500 text-white rounded-full fixed"
+          style={{ top: '1.5vh', right: '3.1vw', zIndex: isOpen ? '100' : '10' }}
+        >
+          <Bell size={23} />
+          {unreadCount > 0 && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+              {unreadCount}
+            </span>
+          )}
+        </button>
 
       {isOpen && (
         <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg p-4 overflow-y-auto" style={{ width: '450px', zIndex: '101' }}>
@@ -99,21 +108,27 @@ const NotificationComponent = () => {
 
 const EmergencyButton = () => {
   return (
-    <Link to="/emergency" className="flex items-center justify-center bg-red-500 text-white rounded-full fixed z-10" style={{ top: '4vh', right: '5vw', transform: 'translate(-50%, -50%)', width: '40px', height: '40px' }}>
-      <Siren size={24} style={{ marginRight: '0px' }} />
+    <Link to="/emergency" className="flex items-center justify-center bg-red-500 text-white rounded-full z-10" style={{width: '40px', height: '40px', margin:"2px"}}>
+        <div style={style}>
+        <Popover content="Click here in case of Emergency">
+          <Siren size={24}/>
+        </Popover>
+      </div>
     </Link>
   );
 };
 
-const EmergencyNotificationButton = () => {
-  return (
-    <>
-        <div>
-        <EmergencyButton />
-        <NotificationComponent />
-        </div>
-    </>
-  );
-};
+export default EmergencyButton;
 
-export default EmergencyNotificationButton;
+// const EmergencyNotificationButton = () => {
+//   return (
+//     <>
+//         <div style={{display:"flex", flexDirection:"column"}}>
+//           <EmergencyButton />
+//           <NotificationComponent />
+//         </div>
+//     </>
+//   );
+// };
+
+// export default EmergencyNotificationButton;
