@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,10 +6,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Calendar, User, MessageCircle, Paperclip, Pill, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-
+import { Link } from 'react-router-dom';
+import CustomLoader from '@/Partials/CustomLoader';
 
 const PrescriptionCard = ({ prescription }) => (
-  <Card className="mb-4">
+  <Link to={`/patient/prescriptions/${prescription.id}`}>
+    <Card className="mb-4">
     <CardHeader>
       <div className="flex justify-between items-start">
         <CardTitle className="text-lg font-semibold">
@@ -50,6 +52,7 @@ const PrescriptionCard = ({ prescription }) => (
       </div>
     </CardContent>
   </Card>
+  </Link>
 );
 
 const PrescriptionList = ({ prescriptions }) => {
@@ -62,12 +65,47 @@ const PrescriptionList = ({ prescriptions }) => {
   );
 };
 
-const PatientPrescriptions = ({ importantPrescriptions, normalPrescriptions }) => {
+const PatientPrescriptions = () => {
+
+  const [allPrescriptions, setAllPrescriptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    (
+      async () => {
+        try {
+          setLoading(true);
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions`, {
+            headers: { 'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTA4NzM4LCJleHAiOjE3MjI1NDA3Mzh9.4up3e1O7Gez0nnCuFKvcbkQvbE5mpSl6uehf_4o2nDE`
+             },
+            credentials: 'include'
+          });
+  
+          const data = await response.json();
+  
+          if (!response.ok) {
+            setError(data?.msg);
+            return;
+          }
+  
+          const temp =  [...data.normalPrescriptions, ...data.importantPrescriptions]
+          setAllPrescriptions(temp);
+        } catch (error) {
+          console.error('Error fetching prescriptions:', error);
+          setError(error.message);
+        }finally{
+          setLoading(false);
+        }
+      }
+    )()
+  }, []);
+
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allPrescriptions = [...importantPrescriptions, ...normalPrescriptions];
-
+  
   const filteredPrescriptions = allPrescriptions.filter(p => 
     (activeTab === 'all' || 
      (activeTab === 'important' && p.prescriptionType === 'IMPORTANT') ||
@@ -79,8 +117,16 @@ const PatientPrescriptions = ({ importantPrescriptions, normalPrescriptions }) =
      p.doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+  if(loading) {
+    return <div className='flex justify-center items-center h-screen'><CustomLoader /></div>
+  }
+
+  if(error) {
+    return <div className='flex justify-center items-center h-screen'>Error: {error}</div>
+  }
+
   return (
-    <div className="w-full max-w-3xl mx-auto p-4">
+    <div className="w-full max-w-3xl mx-auto p-4 m-7">
       <h2 className="text-2xl font-bold mb-6">Patient Prescriptions</h2>
       <div className="mb-4">
         <Input

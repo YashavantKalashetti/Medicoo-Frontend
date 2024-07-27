@@ -42,37 +42,37 @@ const NotificationComponent = () => {
   };
 
   return (
-    <div className="z-50">
+    <div className="relative z-50">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-blue-500 text-white rounded-full relative"
-        style={{margin:"2px"}}
+        className="p-2 bg-blue-500 text-white rounded-full relative dark:bg-blue-600 dark:text-gray-200"
+        style={{ margin: "2px" }}
       >
         <Bell size={24} />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs dark:bg-red-600">
             {unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg p-4 overflow-y-auto" style={{ width: '450px' }}>
+        <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg p-4 overflow-y-auto dark:bg-gray-800 dark:text-gray-200">
           <button 
             onClick={() => setIsOpen(false)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 rounded-full"
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-2 rounded-full dark:text-gray-400 dark:hover:text-gray-300"
           >
             <X size={35} />
           </button>
-          <h2 className="text-xl font-bold mb-4">Notifications</h2>
+          <h2 className="text-xl font-bold mb-4 dark:text-gray-100">Notifications</h2>
           {notifications.map(notification => (
             <div 
               key={notification.id}
               onClick={() => handleNotificationClick(notification)}
-              className={`p-2 mb-2 rounded cursor-pointer ${notification.read ? 'bg-gray-100' : 'bg-blue-100'}`}
+              className={`p-2 mb-2 rounded cursor-pointer ${notification.read ? 'bg-gray-100 dark:bg-gray-700' : 'bg-blue-100 dark:bg-blue-800'}`}
             >
-              <p className="font-semibold">{notification.senderId}</p>
-              <p className="truncate">{notification.message}</p>
+              <p className="font-semibold dark:text-gray-200">{notification.senderId}</p>
+              <p className="truncate dark:text-gray-300">{notification.message}</p>
             </div>
           ))}
         </div>
@@ -80,12 +80,12 @@ const NotificationComponent = () => {
 
       {selectedNotification && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg max-w-md w-full">
-            <h3 className="text-lg font-bold mb-2">{selectedNotification.senderId}</h3>
-            <p className="mb-4">{selectedNotification.message}</p>
+          <div className="bg-white p-4 rounded-lg max-w-md w-full dark:bg-gray-900 dark:text-gray-200">
+            <h3 className="text-lg font-bold mb-2 dark:text-gray-100">{selectedNotification.senderId}</h3>
+            <p className="mb-4 dark:text-gray-300">{selectedNotification.message}</p>
             <button 
               onClick={closePopup}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-blue-500 text-white px-4 py-2 rounded dark:bg-blue-600"
             >
               Close
             </button>

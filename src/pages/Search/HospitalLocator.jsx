@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BellRing, Hospital, Loader2, Mail, MapPin, Navigation, Phone, Stethoscope, UserRound, UserRoundX } from 'lucide-react';
+import { BellRing, Hospital, Loader2, Mail, MapPin, Navigation, Phone, Stethoscope } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 
 const HospitalLocator = () => {
   const [location, setLocation] = useState(null);
@@ -12,7 +13,9 @@ const HospitalLocator = () => {
   const [error, setError] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const navigate = useNavigate();
+  const [notifying, setNotifying] = useState(false);
 
+  const patientId = "324b8295-bed1-4c08-a4ad-14fb268fde9e"
 
   const fetchHospitals = async (latitude, longitude) => {
     try {
@@ -58,6 +61,10 @@ const HospitalLocator = () => {
     }
   };
 
+  useEffect(() => {
+    handleGeolocation();
+  }, []);
+
   const sendNotification = async (hospitalId) => {
     if(notifying){
       window.alert('Notification currently in progress');
@@ -91,6 +98,7 @@ const HospitalLocator = () => {
         message.success(data.msg);
       }
     } catch (error) {
+      console.log(error);
       message.error(`Hospital could not be alerted`);
     }finally{
       setNotifying(false);
@@ -99,19 +107,15 @@ const HospitalLocator = () => {
     }
   }
 
-  useEffect(() => {
-    handleGeolocation();
-  }, []);
-
 
   return (
-    <div className="p-4 mx-auto mt-5">
+    <div className="p-4 mx-auto mt-5 dark:bg-gray-800 dark:text-white">
       <h1 className="text-2xl font-bold mb-4">Hospital Locator</h1>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className="flex items-center justify-center">
         {location && (
-          <h3 style={{fontSize:"25px"}} className="m-5">
-          Coordinates : {location.latitude}, {location.longitude}
-        </h3>
+          <h3 className="m-5 text-xl">
+            Coordinates : {location.latitude}, {location.longitude}
+          </h3>
         )}
       </div>
 
@@ -122,7 +126,7 @@ const HospitalLocator = () => {
       )}
 
       {error && (
-        <Alert variant="destructive" className="mt-4">
+        <Alert variant="destructive" className="mt-4 dark:bg-red-900">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -136,37 +140,30 @@ const HospitalLocator = () => {
       {hospitals.length > 0 && (
         <div className="mt-4 space-y-4">
           {hospitals.map((hospital) => (
-            
-              <div className="p-4" style={{ border: '1px solid black', background: "#f4f4f4" }}>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-2xl justify-between">
-                    <span className="flex items-center">
-                      <Hospital style={{ color: "#4186E6" }} className="mr-2" />
-                      {hospital.name}
-                    </span>
-                    <div style={{display:"flex", padding:"3px", justifyContent:"space-around"}}>
-
-                    <button onClick={()=> navigate(`/hospitals/${hospital.id}`)} className='m-1' style={{borderRadius: "50%", padding: "8px", background:"#7092DE" }}>
-                        <Navigation className='' />
+            <Card key={hospital.id} className="p-4 border dark:border-black bg-gray-100 dark:bg-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center">
+                    <Hospital className="mr-2 text-blue-500 dark:text-blue-300" />
+                    {hospital.name}
+                  </span>
+                  <div className="flex space-x-2">
+                    <button onClick={() => navigate(`/hospitals/${hospital.id}`)} className="m-1 rounded-full p-2 bg-blue-500 dark:bg-blue-700">
+                      <Navigation className="text-white" />
                     </button>
-                        
-                        <button  className='m-1' style={{ border: "0px solid black", borderRadius: "50%", padding: "7px", background:"#f75445" }}>
-                            <BellRing style={{color:"white"}} />
-                        </button>
-                        </div>
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                  <p className="flex items-center mb-2"><Phone className="mr-2" /> {hospital.contactNumber}</p>
-                  <p className="flex items-center mb-2"><Mail className="mr-2" /> {hospital.email}</p>
-                  <p className="flex items-center mb-2"><MapPin className="mr-2" /> {hospital.address}</p>
-                  <p className="flex items-center">
-                    <Stethoscope className="mr-2" />
-                    {hospital.speciality}
-                  </p>
-                </CardContent>
-              </div>
+                    <button onClick={()=> sendNotification(hospital.id)} className="m-1 rounded-full p-2 bg-red-500 dark:bg-red-700">
+                      <BellRing className="text-white" />
+                    </button>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="flex items-center mb-2"><Phone className="mr-2" /> {hospital.contactNumber}</p>
+                <p className="flex items-center mb-2"><Mail className="mr-2" /> {hospital.email}</p>
+                <p className="flex items-center mb-2"><MapPin className="mr-2" /> {hospital.address}</p>
+                <p className="flex items-center"><Stethoscope className="mr-2" /> {hospital.speciality}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

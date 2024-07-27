@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Heart, User, Menu, X, HeartPulse, LogOut } from 'lucide-react';
+import { Heart, User, Menu, X, HeartPulse, LogOut, SunMoon, Sun, Moon } from 'lucide-react';
 import NotificationComponent from '@/Auth/Notification';
 import EmergencyNotificationButton from '@/Partials/EmergencyButton';
 import EmergencyButton from '@/Partials/EmergencyButton';
@@ -71,8 +71,9 @@ const Navbar = () => {
                 variant="outline"
                 size="icon"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                style={{backgroundColor: theme === 'dark' ? '#343836' : '#f2f7f4', color: theme === 'dark' ? '#f2f7f4' : '#343836'}}
               >
-                {theme === 'dark' ? '🌞' : '🌙'}
+                {theme === 'dark' ? <Sun /> : <Moon />}
             </Button>
           </div>
           <div className="flex items-center sm:hidden">

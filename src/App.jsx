@@ -141,8 +141,7 @@ function App() {
               <Route path="/patient/appointments" element={<PatientAppointments />} />
               <Route path="/patient/medications" element={<MedicationsPage />} />
               <Route path="patient/reports" element={<ReportOrganizer />} />
-              <Route path="patient/prescriptions" element={<PatientPrescriptions importantPrescriptions={importantPrescriptions}
-                  normalPrescriptions={normalPrescriptions} />} />
+              <Route path="patient/prescriptions" element={<PatientPrescriptions />} />
               <Route path="patient/prescriptions/:id" element={<DetailedPrescription />} />
             {/* </Route> */}
 
