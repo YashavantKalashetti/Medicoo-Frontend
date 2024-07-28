@@ -26,6 +26,7 @@ import UnauthorizedAccess from './Auth/UnAuthorized';
 import NotFound from './Auth/NotFount';
 import PatientAppointments from './pages/Patient/PatientAppoinments';
 import RequireAuth from './Auth/RequireAuth';
+import DoctorAppointmentPage from './pages/Doctor/BookAppointment';
 // import DoctorAppointmentPagesx from './pages/Doctor/BookAppointment';
 // import Medications from './pages/Medications';
 // import Appointments from './pages/Appointments';
@@ -149,6 +150,7 @@ function App() {
             {/* <Route element={<RequireAuth allowedRoles={['DOCTOR']} />}> */}
               <Route path="/doctor" element={<DoctorDashboard />} />
               <Route path="/doctor/appointments" element={<AppointmentsDisplay/>} />
+              <Route path="/book-appointments/:id" element={<DoctorAppointmentPage/>} />
               {/* <Route path="/doctor/appointments/:id" element={<AppointmentDetail />} /> */}
               <Route path="/p/:id" element={<MedicationsPage />} />
               <Route path="/p/:id/prescription" element={<PrescriptionForm/>} />
