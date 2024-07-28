@@ -26,6 +26,9 @@ import UnauthorizedAccess from './Auth/UnAuthorized';
 import NotFound from './Auth/NotFount';
 import PatientAppointments from './pages/Patient/PatientAppoinments';
 import RequireAuth from './Auth/RequireAuth';
+import PrescriptionsOfPatients from './pages/Doctor/PrescriptionsOfPatients';
+import DocPatientDashboard from './pages/Doctor/DocPatientDashboard';
+import PatientReportsPage from './pages/Doctor/PatientPeports';
 import DoctorAppointmentPage from './pages/Doctor/BookAppointment';
 // import DoctorAppointmentPagesx from './pages/Doctor/BookAppointment';
 // import Medications from './pages/Medications';
@@ -130,7 +133,7 @@ function App() {
 
 
             <Route path="/doctors" element={<DoctorSearchPage />} />
-            <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+            <Route path="/doctors/:id" element={<DoctorAppointmentPage />} />
             <Route path="/hospitals" element={<HospitalList />} />
             <Route path="/hospitals/:id" element={<HospitalProfile />} />
             <Route path='/emergency' element={<HospitalLocator />} />
@@ -152,8 +155,11 @@ function App() {
               <Route path="/doctor/appointments" element={<AppointmentsDisplay/>} />
               <Route path="/book-appointments/:id" element={<DoctorAppointmentPage/>} />
               {/* <Route path="/doctor/appointments/:id" element={<AppointmentDetail />} /> */}
-              <Route path="/p/:id" element={<MedicationsPage />} />
-              <Route path="/p/:id/prescription" element={<PrescriptionForm/>} />
+              <Route path="/p/:id" element={<DocPatientDashboard />} />
+              <Route path="/p/:id/medications" element={<MedicationsPage />} />
+              <Route path="/p/:id/reports" element={<PatientReportsPage />} />
+              <Route path="/p/:id/prescriptions" element={<PrescriptionForm/>} />
+              <Route path="/p/:id/prescriptions" element={<PrescriptionsOfPatients />} />
             {/* </Route> */}
 
 

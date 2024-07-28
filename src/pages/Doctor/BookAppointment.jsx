@@ -2,21 +2,27 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { MapPin, MessageSquare, Phone, Star, Clock, DollarSign, Award, Book, X, ChevronDown } from 'lucide-react';
+import { MapPin, MessageSquare, Phone, Star, Clock, DollarSign, Award, Book, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { message } from 'antd';
 
 const DoctorAppointmentPage = () => {
-  const {id }= useParams();
+  const { id } = useParams();
   const [doctorData, setDoctorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [appointmentType, setAppointmentType] = useState('online');
-  const [socket, setSocket] = useState(null);
+  const [appointmentType, setAppointmentType] = useState('ONLINE');
   const [showBookingConfirmation, setShowBookingConfirmation] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [fetching, setFetching] = useState(true);
 
+  const userId = '1234';
+
+  // ... (keep other existing state and effects)
   const AppointmentTypeDropdown = ({ value, onChange }) => {
     return (
       <div className="mb-8 space-y-3">
@@ -31,17 +37,13 @@ const DoctorAppointmentPage = () => {
             <SelectValue placeholder="Select appointment type" />
           </SelectTrigger>
           <SelectContent className="bg-white rounded-md shadow-lg border border-gray-200">
-            <SelectItem value="online" className="py-2 px-4 hover:bg-blue-50 cursor-pointer transition duration-150 ease-in-out">Online Consultation</SelectItem>
-            <SelectItem value="offline" className="py-2 px-4 hover:bg-blue-50 cursor-pointer transition duration-150 ease-in-out">In-Person Visit</SelectItem>
+            <SelectItem value="ONLINE" className="py-2 px-4 hover:bg-blue-50 cursor-pointer transition duration-150 ease-in-out">Online Consultation</SelectItem>
+            <SelectItem value="OFFLINE" className="py-2 px-4 hover:bg-blue-50 cursor-pointer transition duration-150 ease-in-out">In-Person Visit</SelectItem>
           </SelectContent>
         </Select>
       </div>
     );
   };
-
-  const doctorId = '1260d06d-daed-415b-b1d0-01760c96bc0a';
-  const userId = '1260d06d-daed-415b-b1d0-01760c96bc0a';
-
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
@@ -55,6 +57,8 @@ const DoctorAppointmentPage = () => {
       } catch (error) {
         console.error('Error fetching doctor details:', error);
         setLoading(false);
+      }finally{
+        setFetching(false);
       }
     };
 
@@ -64,58 +68,92 @@ const DoctorAppointmentPage = () => {
   useEffect(() => {
     if (!doctorData) return;
 
-    const newSocket = new WebSocket(`http://localhost:3030/details?userId=${userId}&type=doctor&id=${doctorId}`);
+    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${userId}&type=doctor&id=${id}`);
     setSocket(newSocket);
 
     newSocket.onopen = () => console.log('WebSocket connection for time slots opened');
     newSocket.onmessage = (event) => {
       const { type, details } = JSON.parse(event.data);
-      if (type === 'timeSlots') {
+      if (type === 'doctor') {
         setDoctorData(prevData => ({
           ...prevData,
           availableSlotsByDate: details.availableSlotsByDate
         }));
+        console.log('Time slots updated: ----------#####-----------------########');
       }
     };
+
     newSocket.onclose = (event) => console.log('WebSocket connection for time slots closed:', event);
     newSocket.onerror = (error) => console.error('WebSocket error for time slots:', error);
 
-    return () => newSocket.close();
-  }, [doctorData]);
+    // return () => newSocket.close();
+  }, [fetching]);
 
   const handleBookAppointment = useCallback(() => {
     setShowBookingConfirmation(true);
   }, []);
 
-  const handleConfirmBooking = (reason, acknowledged) => {
-    console.log('Booking confirmed', {
-      doctorId: id,
-      date: selectedDate,
-      time: selectedTime,
-      reason: reason,
-      appointmentType: appointmentType,
-    });
+  const handleConfirmBooking = async (reason, acknowledged) => {
+    console.log('Booking appointment:', selectedDate, selectedTime, reason, acknowledged);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/appointments`,{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTYzMTI0LCJleHAiOjE3MjI1OTUxMjR9.CDKhqA0QKvTOgDKuQwgTDFgakNncTgvRJFwglGNOIfk`,
+          },
+          body: JSON.stringify({
+            doctorId: id,
+            date: selectedDate,
+            slotTime: selectedTime,
+            reason: reason,
+            appointmentType: appointmentType,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          console.log('Error booking appointment:', data?.message);
+          throw new Error('Error booking appointment');
+        }
+
+    } catch (error) {
+      console.log('Error booking appointment:', error);
+      message.error('Error booking appointment')
+    }
+
     setShowBookingConfirmation(false);
+    message.success('Appointment booked successfully');
   };
 
   const renderDateButtons = useCallback(() => {
+    if (!doctorData || !doctorData.availableSlotsByDate) return null;
+
     return doctorData.availableSlotsByDate.map((slot) => (
       <motion.button
         key={slot.date}
-        onClick={() => setSelectedDate(slot.date)}
+        onClick={() => {
+          setSelectedDate(slot.date)
+          setSelectedTime(null)
+        }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`px-4 py-2 rounded-full ${selectedDate === slot.date
-          ? 'bg-blue-500 text-white'
-          : 'bg-gray-100 text-gray-800 hover:bg-blue-100'
-          } transition-all duration-300`}
+        className={`px-4 py-2 rounded-full ${
+          selectedDate === slot.date
+            ? isDarkTheme ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+            : isDarkTheme
+              ? 'bg-gray-700 text-gray-200 hover:bg-blue-800'
+              : 'bg-gray-100 text-gray-800 hover:bg-blue-100'
+        } transition-all duration-300`}
       >
         {format(parseISO(slot.date), 'EEE, MMM d')}
       </motion.button>
     ));
-  }, [doctorData, selectedDate]);
+  }, [doctorData, selectedDate, isDarkTheme]);
 
   const renderTimeSlots = useCallback(() => {
+    if (!doctorData || !doctorData.availableSlotsByDate) return null;
+
     const selectedSlots = doctorData.availableSlotsByDate.find(slot => slot.date === selectedDate)?.availableSlots || [];
     return (
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -125,12 +163,15 @@ const DoctorAppointmentPage = () => {
             onClick={() => setSelectedTime(slot.time)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-2 rounded-lg text-center transition-all duration-300 ${selectedTime === slot.time
-              ? 'bg-blue-500 text-white shadow-md'
-              : slot.isBooked
-                ? 'bg-red-100 text-red-500'
-                : 'bg-gray-100 hover:bg-blue-100'
-              } ${slot.isBooked ? 'cursor-not-allowed' : ''}`}
+            className={`p-2 rounded-lg text-center transition-all duration-300 ${
+              selectedTime === slot.time
+                ? isDarkTheme ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-500 text-white shadow-md'
+                : slot.isBooked
+                  ? isDarkTheme ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-500'
+                  : isDarkTheme
+                    ? 'bg-gray-700 hover:bg-blue-800 text-gray-200'
+                    : 'bg-gray-100 hover:bg-blue-100'
+            } ${slot.isBooked ? 'cursor-not-allowed' : ''}`}
             disabled={slot.isBooked}
           >
             {format(parseISO(`2000-01-01T${slot.time}`), 'h:mm a')}
@@ -138,7 +179,9 @@ const DoctorAppointmentPage = () => {
         ))}
       </div>
     );
-  }, [doctorData, selectedDate, selectedTime]);
+  }, [doctorData, selectedDate, selectedTime, isDarkTheme]);
+
+  // ... (keep other existing functions)
 
   const BookingConfirmationModal = ({ onConfirm, onClose }) => {
     const [reason, setReason] = useState('');
@@ -207,20 +250,21 @@ const DoctorAppointmentPage = () => {
     );
   };
 
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className={`flex items-center justify-center h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-white'}`}>
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1 }}
-          className="w-16 h-16 border-t-4 border-blue-500 rounded-full"
+          className={`w-16 h-16 border-t-4 ${isDarkTheme ? 'border-blue-400' : 'border-blue-500'} rounded-full`}
         />
       </div>
     );
   }
 
   if (!doctorData) {
-    return <div className="flex items-center justify-center h-screen">Doctor not found</div>;
+    return <div className={`flex items-center justify-center h-screen ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}>Doctor not found</div>;
   }
 
   const { doctor } = doctorData;
@@ -229,17 +273,14 @@ const DoctorAppointmentPage = () => {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-      <div className="flex h-screen font-['Poppins',sans-serif] mt-20 mb-20">
-       
-
-        {/* Main content */}
+      <div className={`flex h-screen font-['Poppins',sans-serif] mt-20 mb-20 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="flex-1 p-8 overflow-hidden"
         >
-          <div className="max-w-6xl mx-auto bg-slate-100 rounded-3xl shadow-lg overflow-hidden shadow-custom ">
+          <div className={`max-w-6xl mx-auto ${isDarkTheme ? 'bg-gray-800' : 'bg-slate-100'} rounded-3xl shadow-lg overflow-hidden shadow-custom`}>
             <motion.div
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -248,14 +289,14 @@ const DoctorAppointmentPage = () => {
             >
               {/* Left section */}
               <div className="w-full md:w-2/3 p-8">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800">Make an Appointment</h1>
+                <h1 className={`text-3xl font-bold mb-6 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Make an Appointment</h1>
 
                 {/* Appointment Type Dropdown */}
-                <AppointmentTypeDropdown />
+                <AppointmentTypeDropdown value={appointmentType} onChange={setAppointmentType} isDarkTheme={isDarkTheme} />
 
                 {/* Date selection */}
                 <div className="mb-8">
-                  <h2 className="text-lg font-semibold mb-4 text-gray-700">Choose date</h2>
+                  <h2 className={`text-lg font-semibold mb-4 ${isDarkTheme ? 'text-gray-200' : 'text-gray-700'}`}>Choose date</h2>
                   <div className="flex flex-wrap gap-2">
                     {renderDateButtons()}
                   </div>
@@ -264,7 +305,7 @@ const DoctorAppointmentPage = () => {
                 {/* Time selection */}
                 {selectedDate && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-700">Choose time</h2>
+                    <h2 className={`text-lg font-semibold mb-4 ${isDarkTheme ? 'text-gray-200' : 'text-gray-700'}`}>Choose time</h2>
                     {renderTimeSlots()}
                   </div>
                 )}
@@ -274,7 +315,11 @@ const DoctorAppointmentPage = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full md:w-1/2 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-all duration-300"
+                    className={`w-full md:w-1/2 ${
+                      isDarkTheme
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-green-500 hover:bg-green-600'
+                    } text-white py-3 rounded-lg font-semibold transition-all duration-300`}
                     disabled={!selectedDate || !selectedTime}
                     onClick={handleBookAppointment}
                   >
@@ -354,9 +399,11 @@ const DoctorAppointmentPage = () => {
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-2 text-red-500" />
                     <div>
-                      <h3 className="font-semibold">Location</h3>
+                      <h3 className="font-semibold">Affiliated Hospitals </h3>
                       <p className="text-sm text-gray-600 break-words">
-                        {doctor.affiliatedHospitals.length > 0 ? doctor.affiliatedHospitals[0] : 'No affiliated hospital'}
+                        {doctor.affiliatedHospitals.length > 0 ? (
+                          doctor.affiliatedHospitals.map((hospital) => hospital.name).join(', ')
+                        ) : 'No affiliated hospital'}
                       </p>
                     </div>
                   </div>
@@ -366,7 +413,13 @@ const DoctorAppointmentPage = () => {
           </div>
         </motion.div>
       </div>
-      {showBookingConfirmation && <BookingConfirmationModal onConfirm={handleConfirmBooking} onClose={() => setShowBookingConfirmation(false)} />}
+      {showBookingConfirmation && (
+        <BookingConfirmationModal
+          onConfirm={handleConfirmBooking}
+          onClose={() => setShowBookingConfirmation(false)}
+          isDarkTheme={isDarkTheme}
+        />
+      )}
     </>
   );
 };

@@ -4,9 +4,32 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, User, Phone, Hospital, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, Phone, Hospital, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught in Error Boundary: ", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+    return this.props.children;
+  }
+}
 
 const AppointmentRow = ({ appointment }) => (
   <TableRow>
@@ -55,7 +78,7 @@ const AppointmentRow = ({ appointment }) => (
     </TableCell>
     <TableCell>
       <Button variant="ghost" size="sm" asChild className="p-0">
-        <a href={`/doctor/appointments/${appointment.id}`} target="_blank" rel="noopener noreferrer">
+        <a href={`/p/${appointment.patientId}`} target="_blank" rel="noopener noreferrer">
           <ExternalLink className="w-4 h-4" />
         </a>
       </Button>
@@ -99,74 +122,30 @@ const AppointmentsDisplay = () => {
     const fetchAppointments = async () => {
       setLoading(true);
       try {
-        // Simulating API call with setTimeout
-        setTimeout(() => {
-          setAppointments({
-            offlineAppointments: [{
-              "id": "faf919ed-dcab-4c62-8251-6e656764321c",
-              "patientId": "324b8295-bed1-4c08-a4ad-14fb268fde9e",
-              "doctorId": "772014c3-5bc0-4a30-9497-5708b3576675",
-              "date": "2024-07-27T14:45:00.000Z",
-              "reason": "Nausea",
-              "createdAt": "2024-07-26T19:51:51.472Z",
-              "updatedAt": "2024-07-26T19:51:51.472Z",
-              "status": "NORMAL",
-              "mode": "OFFLINE",
-              "hospitalId": null,
-              "patient": {
-                "name": "Yashavant",
-                "contactNumber": "8073889510",
-                "gender": "MALE",
-                "dob": "2003-02-22T00:00:00.000Z",
-                "age": 21
-              }
-            }],
-            onlineAppointments: [
-              {
-                "id": "c0d0b1ca-821c-443c-a2d0-dac8310cf588",
-                "patientId": "324b8295-bed1-4c08-a4ad-14fb268fde9e",
-                "doctorId": "772014c3-5bc0-4a30-9497-5708b3576675",
-                "date": "2024-07-27T15:15:00.000Z",
-                "reason": "Nausea",
-                "createdAt": "2024-07-26T19:50:23.015Z",
-                "updatedAt": "2024-07-26T19:50:23.015Z",
-                "status": "IMPORTANT",
-                "mode": "ONLINE",
-                "hospitalId": null,
-                "patient": {
-                  "name": "Yashavant",
-                  "contactNumber": "8073889510",
-                  "gender": "MALE",
-                  "dob": "2003-02-22T00:00:00.000Z",
-                  "age": 21
-                }
-              },
-              {
-                "id": "e6722a37-6794-48c7-b052-847ac77205d9",
-                "patientId": "324b8295-bed1-4c08-a4ad-14fb268fde9e",
-                "doctorId": "772014c3-5bc0-4a30-9497-5708b3576675",
-                "date": "2024-07-27T15:00:00.000Z",
-                "reason": "Nausea",
-                "createdAt": "2024-07-26T20:00:52.176Z",
-                "updatedAt": "2024-07-26T20:00:52.176Z",
-                "status": "NORMAL",
-                "mode": "ONLINE",
-                "hospitalId": null,
-                "patient": {
-                  "name": "Yashavant",
-                  "contactNumber": "8073889510",
-                  "gender": "MALE",
-                  "dob": "2003-02-22T00:00:00.000Z",
-                  "age": 21
-                }
-              }
-            ],
-            previousAppointments: []
-          });
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor/appointments`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzIwMTRjMy01YmMwLTRhMzAtOTQ5Ny01NzA4YjM1NzY2NzUiLCJyb2xlIjoiRE9DVE9SIiwiZW1haWwiOiJzdWpheUBnbWFpbC5jb20iLCJpYXQiOjE3MjIxNDQ2NTYsImV4cCI6MTcyMjU3NjY1Nn0.xzyLwEu248PX8p0rnWg3sfKRrll79nLKJbZOTz5k9BU`
+          }
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Something went wrong!');
+        }
+
+        if (data?.message === 'No appointments found') {
+          setAppointments({ offlineAppointments: [], onlineAppointments: [], previousAppointments: [] });
           setLoading(false);
-        }, 1000);
+          return;
+        }
+
+        const { offlineAppointments, onlineAppointments, previousAppointments } = data;
+        setAppointments({ offlineAppointments, onlineAppointments, previousAppointments });
       } catch (err) {
         setError(err.message);
+      }finally{
         setLoading(false);
       }
     };
@@ -194,41 +173,43 @@ const AppointmentsDisplay = () => {
   if (error) return <div className="text-red-500 text-center py-10">Error: {error}</div>;
 
   return (
-    <Card className="w-full max-w-6xl mx-auto mt-10 mb-7">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-2xl font-bold">Appointments</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="online" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="online">Online Appointments</TabsTrigger>
-            <TabsTrigger value="offline">Offline Appointments</TabsTrigger>
-            <TabsTrigger value="previous">Previous Appointments</TabsTrigger>
-          </TabsList>
-          <TabsContent value="online">
-            {sortedAppointments.onlineAppointments.length > 0 ? (
-              <AppointmentsTable appointments={sortedAppointments.onlineAppointments} />
-            ) : (
-              <p className="text-center py-5">No online appointments scheduled.</p>
-            )}
-          </TabsContent>
-          <TabsContent value="offline">
-            {sortedAppointments.offlineAppointments.length > 0 ? (
-              <AppointmentsTable appointments={sortedAppointments.offlineAppointments} />
-            ) : (
-              <p className="text-center py-5">No offline appointments scheduled.</p>
-            )}
-          </TabsContent>
-          <TabsContent value="previous">
-            {sortedAppointments.previousAppointments.length > 0 ? (
-              <AppointmentsTable appointments={sortedAppointments.previousAppointments} />
-            ) : (
-              <p className="text-center py-5">No previous appointments found.</p>
-            )}
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+    <ErrorBoundary>
+      <Card className="w-full max-w-6xl mx-auto mt-10 mb-7">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-2xl font-bold">Appointments</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="online" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="online">Online Appointments</TabsTrigger>
+              <TabsTrigger value="offline">Offline Appointments</TabsTrigger>
+              <TabsTrigger value="previous">Previous Appointments</TabsTrigger>
+            </TabsList>
+            <TabsContent value="online">
+              {sortedAppointments.onlineAppointments.length > 0 ? (
+                <AppointmentsTable appointments={sortedAppointments.onlineAppointments} />
+              ) : (
+                <p className="text-center py-5">No online appointments scheduled.</p>
+              )}
+            </TabsContent>
+            <TabsContent value="offline">
+              {sortedAppointments.offlineAppointments.length > 0 ? (
+                <AppointmentsTable appointments={sortedAppointments.offlineAppointments} />
+              ) : (
+                <p className="text-center py-5">No offline appointments scheduled.</p>
+              )}
+            </TabsContent>
+            <TabsContent value="previous">
+              {sortedAppointments.previousAppointments.length > 0 ? (
+                <AppointmentsTable appointments={sortedAppointments.previousAppointments} />
+              ) : (
+                <p className="text-center py-5">No previous appointments found.</p>
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </ErrorBoundary>
   );
 };
 

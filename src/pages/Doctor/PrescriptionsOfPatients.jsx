@@ -4,103 +4,60 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Calendar, User, MessageCircle, Paperclip, Pill, Search, ExternalLink, GlobeLock, Globe } from 'lucide-react';
+import { AlertCircle, Calendar, User, MessageCircle, Paperclip, Pill, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import CustomLoader from '@/Partials/CustomLoader';
-import { Button, message, Popover } from 'antd';
 
-const style= {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const PrescriptionCard = ({ prescription }) => {
-  const [isDisplayable, setIsDisplayable] = useState(prescription.displayable);
-
-  const toggleDisplayable = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions/${prescription.id}?status=${!prescription.displayable}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTQyNzEwLCJleHAiOjE3MjI1NzQ3MTB9.lV908kuFYHqRZarUG3But17RWCBLNvqchhV1cqFYvsU`
-        },
-        body: JSON.stringify({ displayable: !isDisplayable })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update prescription visibility');
-      }
-
-      setIsDisplayable((prev) => !prev);
-      message.success('Prescription visibility updated successfully');
-    } catch (error) {
-      console.error(error.message);
-      message.error('Failed to update prescription visibility');
-    }
-  };
-
-  return (
+const PrescriptionCard = ({ prescription }) => (
     <Card className="mb-4">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold">
-            {prescription.prescriptionType === 'IMPORTANT' ? 'Important Prescription' : 'Normal Prescription'}
-          </CardTitle>
-          {prescription.prescriptionType === 'IMPORTANT' && (
-            <Badge variant="destructive" className="ml-2">
-              <AlertCircle className="w-4 h-4 mr-1" />
-              Important
-            </Badge>
-          )}
+    <CardHeader>
+      <div className="flex justify-between items-start">
+        <CardTitle className="text-lg font-semibold">
+          {prescription.prescriptionType === 'IMPORTANT' ? 'Important Prescription' : 'Normal Prescription'}
+        </CardTitle>
+        {prescription.prescriptionType === 'IMPORTANT' && (
+          <Badge variant="destructive" className="ml-2">
+            <AlertCircle className="w-4 h-4 mr-1" />
+            Important
+          </Badge>
+        )}
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-2">
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Calendar className="w-4 h-4 mr-2" />
+          {format(new Date(prescription.date), 'PPP')}
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4 mr-2" />
-            {format(new Date(prescription.date), 'PPP')}
-          </div>
-          <div className="flex items-center text-sm">
-            <User className="w-4 h-4 mr-2" />
-            Dr. {prescription.doctor.name} ({prescription.doctor.specialization})
-          </div>
-          {prescription.instructionForOtherDoctor && (
-            <div className="flex items-start text-sm mt-2">
-              <MessageCircle className="w-4 h-4 mr-2 mt-1" />
-              <p>{prescription.instructionForOtherDoctor}</p>
-            </div>
-          )}
-          <div className="flex items-center text-sm">
-            <Pill className="w-4 h-4 mr-2" />
-            Medications: {prescription.medications.length}
-          </div>
-          <div className="flex items-center text-sm">
-            <Paperclip className="w-4 h-4 mr-2" />
-            Attachments: {prescription.attachments.length}
-          </div>
-          <div className="flex items-center justify-between mt-4">
-            <Link to={`/patient/prescriptions/${prescription.id}`} className="text-blue-600 hover:underline flex items-center">
-              <ExternalLink className="w-4 h-4 mr-1" />
-              View Details
-            </Link>
-            <Button variant={isDisplayable ? "success" : "outline"} size="sm" onClick={toggleDisplayable}>
-              {isDisplayable ? <Globe style={{color:"#80e854"}} /> : <GlobeLock style={{color:"red"}} /> }
-              <div style={style}>
-                <Popover content="If set visible this prescription will be available to doctors in case of emergency">
-                {isDisplayable ? "Visible to Other Doctors" : "Not Visible to Other Doctors"}
-                </Popover>
-              </div>
-              
-            </Button>
-          </div>
+        <div className="flex items-center text-sm">
+          <User className="w-4 h-4 mr-2" />
+          Dr. {prescription.doctor.name} ({prescription.doctor.specialization})
         </div>
-      </CardContent>
-    </Card>
-  );
-};
+        {prescription.instructionForOtherDoctor && (
+          <div className="flex items-start text-sm mt-2">
+            <MessageCircle className="w-4 h-4 mr-2 mt-1" />
+            <p>{prescription.instructionForOtherDoctor}</p>
+          </div>
+        )}
+        <div className="flex items-center text-sm">
+          <Pill className="w-4 h-4 mr-2" />
+          Medications: {prescription.medications.length}
+        </div>
+        <div className="flex items-center text-sm">
+          <Paperclip className="w-4 h-4 mr-2" />
+          Attachments: {prescription.attachments.length}
+        </div>
+        <div className="flex items-center justify-between mt-4">
+          <Link to={`/p/prescriptions/${prescription.id}`} className="text-blue-600 hover:underline flex items-center">
+            <ExternalLink className="w-4 h-4 mr-1" />
+            View Details
+          </Link>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const PrescriptionList = ({ prescriptions }) => {
   return (
@@ -112,7 +69,7 @@ const PrescriptionList = ({ prescriptions }) => {
   );
 };
 
-const PatientPrescriptions = () => {
+const PrescriptionsOfPatients = () => {
 
   const [allPrescriptions, setAllPrescriptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -211,4 +168,4 @@ const PatientPrescriptions = () => {
   );
 };
 
-export default PatientPrescriptions;
+export default PrescriptionsOfPatients;

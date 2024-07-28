@@ -43,7 +43,7 @@ export default function Patient() {
             try {
                 setLoading(true);
                 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMDkwNDA4LCJleHAiOjE3MjI1MjI0MDh9.MvoLmA6S_bQaJnPsvd48PQhDby1Un4njAuTpfQ9ZhAw';
-                const url = 'http://localhost:3030/api/v1/patient';
+                const url = `${import.meta.env.VITE_BACKEND_URL}/patient`;
                 const response = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -221,7 +221,7 @@ export default function Patient() {
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {appointments.slice(0, 5).map((appointment, index) => (
+                                    {appointments.slice(0, 4).map((appointment, index) => (
                                         <Card key={index} className="mb-4">
                                         <CardContent className="p-4 flex justify-between items-start">
                                           <div className="flex-1">
