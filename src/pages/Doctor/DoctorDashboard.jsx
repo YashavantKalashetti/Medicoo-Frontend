@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,152 +10,61 @@ import { MdLocalHospital } from 'react-icons/md';
 import { IoMdArrowForward } from 'react-icons/io';
 import { FiEdit2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '@/context/AuthContext';
+import CustomLoader from '@/Partials/CustomLoader';
 
 const COLORS = ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'];
 
 const DoctorDashboard = () => {
-  const doctorData = {
-    doctor: {
-      id: "772014c3-5bc0-4a30-9497-5708b3576675",
-      name: "Sujay",
-      doctor_number: "DR9922853",
-      contactNumber: "8073889010",
-      gender: "MALE",
-      email: "sujay@gmail.com",
-      dob: "1990-05-20T00:00:00.000Z",
-      address: "123 Main St, City, India",
-      avatar: "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png",
-      consultingFees: 500,
-      availableStartTime: "19:00",
-      availableEndTime: "21:00",
-      availableForConsult: false,
-      languages: ["Kannada", "English", "Hindi"],
-      specialization: "NEONATOLOGIST",
-      practicingSince: "2024-06-13T04:35:15.117Z",
-      education: "MBBS",
-      attendingHospitalId: null,
-      totalAppointments: 0,
-      rating: 0,
-      createdAt: "2024-06-22T11:29:03.722Z",
-      updatedAt: "2024-06-25T11:46:15.651Z",
-      affiliatedHospitals: [
-        {
-          name: "BMS Hospital",
-          address: "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
-          contactNumber: "8045088888",
-          email: "bms@email.com"
-        },
-        {
-          name: "City General Hospital",
-          address: "456 Health Avenue, Metropolis, India",
-          contactNumber: "9876543210",
-          email: "citygeneral@email.com"
-        }
-      ]
-    },
-    onlineAppointments: [
-      {
-        id: "49789e98-ea4b-4590-9929-317282f0fbf3",
-        patientId: "324b8295-bed1-4c08-a4ad-14fb268fde9e",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-22T19:00:00.000Z",
-        reason: "Nausea",
-        createdAt: "2024-06-22T12:08:43.106Z",
-        updatedAt: "2024-06-22T12:08:43.106Z",
-        status: "NORMAL",
-        mode: "ONLINE",
-        hospitalId: null
-      },
-      {
-        id: "69789e98-ea4b-4590-9929-317282f0fbf4",
-        patientId: "124b8295-bed1-4c08-a4ad-14fb268fde9f",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-23T18:00:00.000Z",
-        reason: "Headache",
-        createdAt: "2024-06-23T10:00:43.106Z",
-        updatedAt: "2024-06-23T10:00:43.106Z",
-        status: "NORMAL",
-        mode: "ONLINE",
-        hospitalId: null
-      },
-      {
-        id: "79789e98-ea4b-4590-9929-317282f0fbf5",
-        patientId: "224b8295-bed1-4c08-a4ad-14fb268fde9g",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-24T20:00:00.000Z",
-        reason: "Back pain",
-        createdAt: "2024-06-24T11:08:43.106Z",
-        updatedAt: "2024-06-24T11:08:43.106Z",
-        status: "NORMAL",
-        mode: "ONLINE",
-        hospitalId: null
-      },
-      {
-        id: "89789e98-ea4b-4590-9929-317282f0fbf6",
-        patientId: "324b8295-bed1-4c08-a4ad-14fb268fde9h",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-25T17:00:00.000Z",
-        reason: "Skin rash",
-        createdAt: "2024-06-25T13:08:43.106Z",
-        updatedAt: "2024-06-25T13:08:43.106Z",
-        status: "NORMAL",
-        mode: "ONLINE",
-        hospitalId: null
-      }
-    ],
-    offlineAppointments: [
-      {
-        id: "39789e98-ea4b-4590-9929-317282f0fbf7",
-        patientId: "424b8295-bed1-4c08-a4ad-14fb268fde9i",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-22T15:00:00.000Z",
-        reason: "Cough",
-        createdAt: "2024-06-22T12:00:43.106Z",
-        updatedAt: "2024-06-22T12:00:43.106Z",
-        status: "NORMAL",
-        mode: "OFFLINE",
-        hospitalId: "1a2b3c4d"
-      },
-      {
-        id: "49789e98-ea4b-4590-9929-317282f0fbf8",
-        patientId: "524b8295-bed1-4c08-a4ad-14fb268fde9j",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-23T14:00:00.000Z",
-        reason: "Fever",
-        createdAt: "2024-06-23T10:00:43.106Z",
-        updatedAt: "2024-06-23T10:00:43.106Z",
-        status: "NORMAL",
-        mode: "OFFLINE",
-        hospitalId: "1a2b3c4d"
-      },
-      {
-        id: "59789e98-ea4b-4590-9929-317282f0fbf9",
-        patientId: "624b8295-bed1-4c08-a4ad-14fb268fde9k",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-24T16:00:00.000Z",
-        reason: "Stomach ache",
-        createdAt: "2024-06-24T11:00:43.106Z",
-        updatedAt: "2024-06-24T11:00:43.106Z",
-        status: "NORMAL",
-        mode: "OFFLINE",
-        hospitalId: "1a2b3c4d"
-      },
-      {
-        id: "69789e98-ea4b-4590-9929-317282f0fbf0",
-        patientId: "724b8295-bed1-4c08-a4ad-14fb268fde9l",
-        doctorId: "772014c3-5bc0-4a30-9497-5708b3576675",
-        date: "2024-06-25T18:00:00.000Z",
-        reason: "Allergy",
-        createdAt: "2024-06-25T13:00:43.106Z",
-        updatedAt: "2024-06-25T13:00:43.106Z",
-        status: "NORMAL",
-        mode: "OFFLINE",
-        hospitalId: "1a2b3c4d"
-      }
-    ],
-  };
 
-  const { doctor, onlineAppointments, offlineAppointments } = doctorData;
+  const {user} = useContext(AuthContext);
+
+  const [doctor, setDoctor] = useState({});
+  const [onlineAppointments, setOnlineAppointments] = useState([]);
+  const [offlineAppointments, setOfflineAppointments] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'withCredentials': true,
+            'credentials': 'include',
+            'Authorization': `Bearer ${user.access_token}`
+          },
+        });
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        console.log(data.onlineAppointments);
+        setDoctor(data.doctor);
+        setOnlineAppointments(data.onlineAppointments);
+        setOfflineAppointments(data.offlineAppointments);
+      } catch (error) {
+        console.error('Error fetching doctor data:', error);
+        setError('An error occurred while fetching doctor data.');
+      }finally{
+        setLoading(false);
+      }
+    }
+    )();
+  }, []);
+
+
+
+
+  if (loading) {
+    return <div className='flex justify-center items-center h-screen'><CustomLoader /></div>;
+  }
+
+  if (error) {
+    return <div className='flex justify-center items-center h-screen'>{error}</div>;
+  }
 
   const totalAppointments = onlineAppointments.length + offlineAppointments.length;
   const pieData = [
@@ -166,7 +75,7 @@ const DoctorDashboard = () => {
   ];
 
   const allAppointments = [...onlineAppointments, ...offlineAppointments]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
     .slice(0, 4);
 
   return (
@@ -206,7 +115,7 @@ const DoctorDashboard = () => {
                     >
                       <Avatar className="h-16 sm:h-20 w-16 sm:w-20 border-4 border-primary/10 mr-4 sm:mr-6">
                         <AvatarImage src={doctor.avatar} alt={doctor.name} />
-                        <AvatarFallback>{doctor.name[0]}</AvatarFallback>
+                        <AvatarFallback>{doctor.name}</AvatarFallback>
                       </Avatar>
                     </motion.div>
                     <div>
@@ -236,7 +145,7 @@ const DoctorDashboard = () => {
                 >
                   <InfoItem icon={FaUserMd} label="Specialization" value={doctor.specialization} />
                   <InfoItem icon={FaCalendarAlt} label="Practicing Since" value={new Date(doctor.practicingSince).getFullYear()} />
-                  <InfoItem icon={FaLanguage} label="Languages" value={doctor.languages.join(', ')} />
+                  <InfoItem icon={FaLanguage} label="Languages" value={doctor?.languages?.join(', ')} />
                   <InfoItem icon={FaGraduationCap} label="Education" value={doctor.education} />
                   <InfoItem icon={FaClock} label="Available Time" value={`${doctor.availableStartTime} - ${doctor.availableEndTime}`} />
                   <InfoItem icon={FaDollarSign} label="Consulting Fees" value={`₹${doctor.consultingFees}`} />
@@ -270,7 +179,10 @@ const DoctorDashboard = () => {
                       <div className="flex-grow">
                         <div className="font-medium text-primary">{appointment.reason}</div>
                         <div className="text-sm text-secondary-foreground">
-                          {new Date(appointment.date).toLocaleString()}
+                          {new Date(appointment.date).toISOString().split('T')[0]} - {appointment.date.split('T')[1].split('.')[0]}
+                        </div>
+                        <div className="text-sm text-secondary-foreground">
+                          {}
                         </div>
                       </div>
                       <Badge variant={appointment.mode === 'ONLINE' ? 'default' : 'secondary'} className="ml-2">
@@ -322,7 +234,7 @@ const DoctorDashboard = () => {
             <Card className="overflow-hidden">
               <div className="p-6">
                 <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-4">Affiliated Hospitals</h2>
-                {doctor.affiliatedHospitals.map((hospital, index) => (
+                {doctor?.affiliatedHospitals?.map((hospital, index) => (
                   <div key={index} className="mb-6 last:mb-0">
                     <div className="flex items-center mb-2">
                       <MdLocalHospital className="text-primary mr-3" size={24} />

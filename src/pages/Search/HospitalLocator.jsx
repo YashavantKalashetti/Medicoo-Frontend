@@ -25,7 +25,6 @@ const HospitalLocator = () => {
       }
       const data = await response.json();
       setHospitals(data.hospitals);
-      console.log(data.hospitals);
     } catch (error) {
       setError('Error fetching hospitals: ' + error.message);
     } finally {
@@ -91,19 +90,15 @@ const HospitalLocator = () => {
         throw new Error('Failed to send notification');
       }
       const data = await response.json();
-      console.log(data);
       if(data.message.includes('offline') || data.message.includes('unreachable') || data.message.includes('not')){
         message.error(data.message);
       }else{
         message.success(data.msg);
       }
     } catch (error) {
-      console.log(error);
       message.error(`Hospital could not be alerted`);
     }finally{
       setNotifying(false);
-      // console.log('Notification sent');
-      // console.log(notifying);
     }
   }
 
@@ -127,13 +122,13 @@ const HospitalLocator = () => {
 
       {error && (
         <Alert variant="destructive" className="mt-4 dark:bg-red-900">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription className="dark:text-gray-100">{error}</AlertDescription>
         </Alert>
       )}
 
       {permissionDenied && (
         <div className="mt-4 flex justify-center">
-          <Button onClick={handleGeolocation}>Enable Location Access</Button>
+          <Button >Enable Location Access in the browser</Button>
         </div>
       )}
 

@@ -1,5 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useContext } from 'react';
 import { Search, Download, Eye, X, Calendar } from 'lucide-react';
+import { AuthContext } from '@/context/AuthContext';
+import CustomLoader from '@/Partials/CustomLoader';
+import { set } from 'react-hook-form';
 
 const fileTypes = [
   "All",
@@ -14,30 +17,55 @@ const fileTypes = [
   "Other"
 ];
 
-const sampleReports = [
-  { id: 1, name: 'Blood Test Results', type: 'Blood Report', date: '2023-06-15', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 2, name: 'Brain MRI', type: 'MRI', date: '2023-05-20', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 3, name: 'Chest X-Ray', type: 'X-Ray', date: '2023-07-03', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 4, name: 'Abdominal Ultrasound', type: 'Ultrasound', date: '2023-06-28', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 5, name: 'ECG Report', type: 'ECG', date: '2023-07-10', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 6, name: 'Biopsy Results', type: 'Pathology Report', date: '2023-06-05', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 7, name: 'Medication Prescription', type: 'Prescription', date: '2023-07-15', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-  { id: 8, name: 'Allergy Test', type: 'Other', date: '2023-05-30', url: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' },
-];
 
 const ReportOrganizer = () => {
+
+  const {user} = useContext(AuthContext);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [viewingReport, setViewingReport] = useState(null);
+  const [sampleReports, setSampleReports] = useState([]);
+  const [loading, setLoading] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/reports`,{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user?.access_token}`,
+          },
+        });
+  
+        const data = await response.json();
+        if(!response.ok) {
+          setError(data.message);
+        }else{
+          setSampleReports(data.reports);
+        }
+      } catch (error) {
+        setError("Error fetching reports");
+      }finally {
+        setLoading(false);
+      }
+    }
+  )();
+  }, []);
+
+  
 
   const filteredReports = useMemo(() => {
     return sampleReports.filter(report => 
       (selectedType === 'All' || report.type === selectedType) &&
-      (report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       report.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ( report.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
        report.date.includes(searchTerm))
     );
-  }, [searchTerm, selectedType]);
+  }, [searchTerm, selectedType, sampleReports]);
 
   const handleView = (report) => {
     setViewingReport(report);
@@ -46,6 +74,15 @@ const ReportOrganizer = () => {
   const handleDownload = (url) => {
     window.open(url, '_blank');
   };
+
+  if (loading) {
+    return <div className='flex justify-center items-center h-screen'><CustomLoader /></div>;
+  }
+
+  if (error) {
+    return <div className='text-3xl flex justify-center items-center h-screen text-red-500'>{error}</div>;
+  }
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl mt-4">
@@ -81,7 +118,7 @@ const ReportOrganizer = () => {
               {/* If needed add a link for the prescription here */}
               {/* <p className="text-sm text-gray-600 mb-2">{report.type}</p> */}
               <p className="text-sm text-gray-500 mb-2 flex items-center">
-                <Calendar size={16} className="mr-1" /> {report.date}
+                <Calendar size={16} className="mr-1" /> {report.date.split('T')[0]}
               </p>
             </div>
             <div className="flex justify-end space-x-2">

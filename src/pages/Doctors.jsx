@@ -14,7 +14,6 @@ const DEFAULT_AVATAR = "https://e7.pngegg.com/pngimages/799/987/png-clipart-comp
 const specializations = ['ALL'];
 
 const DoctorCard = ({ doctor }) => (
-  // console.log(doctor._id);
   <motion.div
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
@@ -286,7 +285,7 @@ const DoctorSearchPage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:3030/api/v1/search/doctors');
+        const response = await axios.get('http://localhost:3030/api/v1/search/doctors?page=1&perPage=100');
         const doctors = response.data.doctors.map(doctor => ({
           ...doctor,
           avatar: doctor.avatar || DEFAULT_AVATAR

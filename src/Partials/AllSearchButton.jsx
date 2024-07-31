@@ -15,7 +15,7 @@ const items = [
   {
     key: '2',
     label: (
-      <a target="" rel="noopener noreferrer" href="/doctors">
+      <a className='' target="" rel="noopener noreferrer" href="/doctors">
         Doctors
       </a>
     ),
@@ -27,7 +27,7 @@ const AllSearchButton = () => (
     <a onClick={(e) => e.preventDefault()}>
       <Space>
         Search
-        <DownOutlined />
+        <DownOutlined className='' />
       </Space>
     </a>
   </Dropdown>

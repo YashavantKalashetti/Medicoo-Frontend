@@ -24,38 +24,38 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white shadow-sm fixed w-full z-10" style={{zIndex:"60"}}>
+    <nav className="bg-white dark:bg-gray-700 shadow-sm fixed w-full z-10" style={{zIndex:"60"}}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <HeartPulse className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-gray-800">Medicoo</span>
+              <span className="ml-2 text-xl font-bold text-gray-800 dark:text-gray-100 dark:hover:text-gray-900 hover:duration-300">Medicoo</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <NavLink to="/" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              <NavLink to="/" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Home
               </NavLink>
-              <NavLink to="/about" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              <NavLink to="/about" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 About
               </NavLink>
-              <NavLink to="/contact" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              <NavLink to="/contact" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Contact
               </NavLink>
                 {
                   user && 
-                <NavLink to={`/${user.role.toLowerCase()}`} className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                <NavLink to={`/${user.role.toLowerCase()}`} className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                   Dashboard
                 </NavLink>
                 }
-              <div className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              <div className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 <AllSearchButton />
               </div>
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {user ? (
-              <Button onClick={logoutUser} className="rounded text-gray-100 bg-gray-800 hover:text-gray-900 hover:bg-gray-200 flex px-4 py-5">
+              <Button onClick={logoutUser} className="rounded text-gray-100 bg-gray-800 hover:text-gray-900 hover:bg-gray-200 dark:bg-gray-700 flex px-4 py-5">
                 <LogOut className="h-5 w-7" />
                 <span className="">Logout</span>
             </Button>): (

@@ -50,10 +50,10 @@ const About = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-5xl font-extrabold text-blue-900 text-center mb-8 mt-10">
+          <h1 className="text-5xl font-extrabold text-blue-900 dark:text-gray-300 text-center mb-8 mt-10">
             Revolutionizing Healthcare Management
           </h1>
-          <p className="text-xl text-blue-700 text-center max-w-3xl mx-auto mb-16 leading-relaxed">
+          <p className="text-xl text-blue-700 dark:text-gray-300 text-center max-w-3xl mx-auto mb-16 leading-relaxed">
             HealthHub is your all-in-one platform for managing medical records, consultations, and emergencies. Experience seamless healthcare like never before.
           </p>
         </motion.section>
@@ -67,18 +67,18 @@ const About = () => {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              className={`p-8 rounded-xl  cursor-pointer shadow-lg ${
-                activeTab === feature.tab ? 'bg-blue-600 text-white' : 'bg-white'
+              className={`p-8 rounded-xl cursor-pointer shadow-lg ${
+                activeTab === feature.tab ? 'bg-blue-600 dark:bg-gray-400 border-2 dark:border-amber-400' : 'bg-white dark:bg-gray-700'
               }`}
               // whileHover={{ scale: 1.05 ,cursor:'pointer'}}
               // transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => setActiveTab(feature.tab)}
             >
               <feature.icon className={`h-16 w-16 cursor-pointer mb-6 ${activeTab === feature.tab ? 'text-white' : 'text-blue-600'}`} />
-              <h3 className={`text-xl font-bold mb-4 cursor-pointer ${activeTab === feature.tab ? 'text-white' : 'text-blue-900'}`}>
+              <h3 className={`text-xl font-bold mb-4 cursor-pointer ${activeTab === feature.tab ? 'text-white' : 'text-blue-900 dark:text-gray-400'}`}>
                 {feature.title}
               </h3>
-              <p className={`${activeTab === feature.tab ? 'text-blue-100' : 'text-blue-700'} leading-relaxed`}>{feature.description}</p>
+              <p className={`${activeTab === feature.tab ? 'text-blue-100' : 'text-blue-700 dark:text-gray-400'} leading-relaxed`}>{feature.description}</p>
             </motion.div>
           ))}
         </motion.section>
@@ -88,14 +88,14 @@ const About = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white p-10 rounded-xl shadow-lg mb-20"
+          className="bg-white p-10 rounded-xl shadow-lg mb-20 dark:bg-gray-700"
         >
-          <h2 className="text-3xl font-bold text-blue-900 mb-6">{tabContent[activeTab].title}</h2>
-          <p className="text-blue-700 leading-relaxed">{tabContent[activeTab].content}</p>
+          <h2 className="text-3xl font-bold text-blue-900 mb-6 dark:text-gray-300">{tabContent[activeTab].title}</h2>
+          <p className="text-blue-700 leading-relaxed dark:text-gray-300">{tabContent[activeTab].content}</p>
         </motion.section>
 
         <section className="text-center mb-20">
-          <h2 className="text-4xl font-bold text-blue-900 mb-12">Why Choose HealthHub?</h2>
+          <h2 className="text-4xl font-bold text-blue-900 dark:text-gray-300 mb-12">Why Choose HealthHub?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { icon: Shield, title: 'Privacy & Security', description: 'Your data is protected with state-of-the-art encryption and access controls.' },
@@ -107,11 +107,11 @@ const About = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-blue-50 p-8 rounded-xl shadow-md"
+                className="bg-blue-50 p-8 rounded-xl shadow-md dark:bg-gray-700"
               >
                 <benefit.icon className="h-16 w-16 text-blue-600 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-blue-900 mb-4">{benefit.title}</h3>
-                <p className="text-blue-700 leading-relaxed">{benefit.description}</p>
+                <h3 className="text-2xl font-bold text-blue-900 mb-4 dark:text-gray-300">{benefit.title}</h3>
+                <p className="text-blue-700 leading-relaxed dark:text-gray-300">{benefit.description}</p>
               </motion.div>
             ))}
           </div>

@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Clock, Calendar, AlertCircle, Plus, X, Pill } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import NotificationPusher from '@/Partials/NotificationPusher';
 import NotificationComponent from '@/Partials/NotificationPusher';
+import { AuthContext } from '@/context/AuthContext';
 
-const prescriptionData = [
+const medications = [
   {
     "medicine": "Olkem Trio",
     "dosage": "500 mg",
@@ -45,13 +46,16 @@ const MedicationCard = ({ medication }) => {
   const daysLeft = Math.ceil((validTillDate - new Date()) / (1000 * 60 * 60 * 24));
   const progress = Math.min(100, Math.max(0, (daysLeft / medication.numberOfDays) * 100));
 
+  const colors = ["#FFD700", "#FF6347", "#4682B4"];
+  const random = Math.floor(Math.random() * colors.length);
+
   return (
     <Card className="overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-2xl border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
       <CardContent className="p-0">
         <div className="p-6 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-t-lg">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mr-4 shadow-lg" style={{ backgroundColor: medication.color }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mr-4 shadow-lg" style={{ backgroundColor: colors[random] }}>
                 <Pill className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -59,10 +63,13 @@ const MedicationCard = ({ medication }) => {
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{medication.dosage}</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{daysLeft} days left</p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">of {medication.numberOfDays} days</p>
-            </div>
+            {
+              daysLeft > 0 &&  
+              <div className="text-right">
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{daysLeft} days left</p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">of {medication.numberOfDays} days</p>
+              </div>
+            }
           </div>
           <div className="space-y-4">
             <div className="flex items-center">
@@ -82,12 +89,16 @@ const MedicationCard = ({ medication }) => {
         <div className="px-6 py-4 bg-white border-t border-gray-200 dark:bg-gray-900 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{Math.round(progress)}%</span>
+            {
+              daysLeft > 0 ?
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{Math.round(progress)}%</span> :
+            <span className="text-sm font-semibold text-red-500 dark:text-red-400">Medicine period has completed</span>
+          }   
           </div>
           <div className="relative pt-1">
             <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-300 dark:bg-gray-700">
               <div
-                style={{ width: `${progress}%`, backgroundColor: medication.color }}
+                style={{ width: daysLeft >0 ?`${progress}%`: 500 , backgroundColor: colors[random] }}
                 className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ease-in-out"
               ></div>
             </div>
@@ -101,8 +112,49 @@ const MedicationCard = ({ medication }) => {
 const MedicationsPage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const {user}= useContext(AuthContext)
+
+  const [medications, setMedications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [expiredMedications, setExpiredMedications] = useState([]);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setError(false);
+        setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/medications`,{
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${user?.token ||'jj'}`,
+          }
+        });
+        const data = await response.json();
+        if(!response.ok) {
+          setError(data.message);
+          return;
+        }
+        setMedications(data.validMediations);
+        setExpiredMedications(data.expiredMedications)
+      } catch (error) {
+        setError("Error fetching medications");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if(loading) {
+    return <div className='flex justify-center items-center h-screen'>Loading...</div>;
+  }
+
+  if(error) {
+    return <div className='flex justify-center items-center h-screen text-red-500'>{error}</div>;
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900 min-h-screen mb-5">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Your Medications</h1>
         {/* <Button
@@ -113,10 +165,18 @@ const MedicationsPage = () => {
         </Button> */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {prescriptionData.map((medication) => (
+        {medications.map((medication) => (
           <MedicationCard key={medication.prescriptionId} medication={medication} />
         ))}
       </div>
+
+      <h2 className="text-4xl font-bold text-red-500 dark:text-red-500 mt-12 mb-8">Expired Medications</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {expiredMedications.map((medication) => (
+          <MedicationCard key={medication.prescriptionId} medication={medication} />
+        ))}
+      </div>  
+      
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg w-96 max-w-md shadow-lg">

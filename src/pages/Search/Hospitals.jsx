@@ -37,7 +37,15 @@ const HospitalList = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/hospitals`);
+        
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/hospitals`,{
+          headers: {
+            'Content-Type': 'application/json',
+            'no-cors': true,
+            'withCredentials': true,
+            'credentials': 'include',
+          },
+        });
         const data = await response.json();
         if (data.error) {
           setError(data.error);
@@ -172,7 +180,7 @@ const HospitalList = () => {
                 <PaginationLink
                   href="#"
                   onClick={(e) => { e.preventDefault(); paginate(pageNumber); }}
-                  className={`text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-500 ${currentPage === pageNumber ? 'font-bold' : ''}`}
+                  className={`text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-500 ${currentPage === pageNumber ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
                 >
                   {pageNumber}
                 </PaginationLink>

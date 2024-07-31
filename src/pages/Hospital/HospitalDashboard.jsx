@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Card, Avatar, Typography, Divider, List, Tag, Tabs, Row, Col, Statistic, Timeline, Button, Space, Badge, Empty } from 'antd';
 import { PhoneOutlined, MailOutlined, EnvironmentOutlined, CalendarOutlined, TeamOutlined, StarOutlined, ClockCircleOutlined, UserOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -23,6 +23,7 @@ import {
 import { Link } from 'react-router-dom';
 import { set } from 'react-hook-form';
 import CustomLoader from '@/Partials/CustomLoader';
+import { AuthContext } from '@/context/AuthContext';
 
 
 // const tempHospital = {
@@ -102,6 +103,8 @@ const HospitalDashboard = () => {
   const [patientsCount, setPatientsCount] = useState(0);
   const [emergencyAppointments, setEmergencyAppointments] = useState([]);
 
+  const {user} = useContext(AuthContext)
+
   useEffect(() => {
     fetchHospital();
   }, []);
@@ -115,14 +118,16 @@ const HospitalDashboard = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
+          'Authorization': `Bearer ${user?.access_token}`
         },
       });
+      const data = await response.json();
       if(response.status >= 400) {
-        setError('Unable to fetch hospital data');
+        setError(data?.message || 'Something went wrong');
         return
       }
-      const data = await response.json();
+      // console.log("previous Days",data.previousAppointments)
+      // console.log("Todays appointments", data.todayAppointment)
       setHospital(data.hospital);
       setRegisteredDoctors(data.registeredDoctors);
       setTodayAppointment(data.todayAppointment);
@@ -142,7 +147,7 @@ const HospitalDashboard = () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
+        'Authorization': `Bearer ${user?.access_token}`
       },
     })
     setHospital(prevHospital => ({
@@ -168,7 +173,7 @@ const HospitalDashboard = () => {
   }
 
   if(error) {
-    return <div className='flex justify-center items-center h-screen'>Error: {error}</div>
+    return <div className='flex justify-center items-center h-screen text-red-500'>Error: {error}</div>
   }
 
   return (
@@ -330,11 +335,11 @@ const HospitalDashboard = () => {
                 {todayAppointment.length > 0 ? (
                   <Timeline mode="left">
                     {todayAppointment.map((appointment, index) => (
-                      <Timeline.Item key={index} label={appointment.time}>
+                      <Timeline.Item key={index} label={appointment?.time}>
                         <Card size="small">
-                          Appointment with Dr. {appointment.doctorName}
+                          Appointment with Dr. {appointment?.doctor?.name}
                           <br />
-                          Patient: {appointment.patientName}
+                          Patient: {appointment?.patient?.name}
                         </Card>
                       </Timeline.Item>
                     ))}
@@ -347,11 +352,11 @@ const HospitalDashboard = () => {
                 {previousAppointments.length > 0 ? (
                   <Timeline mode="left">
                     {previousAppointments.map((appointment, index) => (
-                      <Timeline.Item key={index} label={appointment.date}>
+                      <Timeline.Item key={index} label={appointment?.time}>
                         <Card size="small">
-                          Appointment with Dr. {appointment.doctorName}
+                          Appointment with Dr. {appointment?.doctor?.name}
                           <br />
-                          Patient: {appointment.patientName}
+                          Patient: {appointment?.patient?.name}
                         </Card>
                       </Timeline.Item>
                     ))}

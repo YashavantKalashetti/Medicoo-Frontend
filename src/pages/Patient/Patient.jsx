@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Avatar,
     AvatarImage,
@@ -28,8 +28,10 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AllergyAndMedicalHistory from './AllergyAndMedicalHistory';
 import CustomLoader from '@/Partials/CustomLoader';
+import { AuthContext } from '@/context/AuthContext';
 
 export default function Patient() {
+    const {user} = useContext(AuthContext)
     const [patient, setPatient] = useState({});
     const [appointments, setAppointments] = useState([]);
     const [medications, setMedications] = useState([]);
@@ -41,20 +43,25 @@ export default function Patient() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setError(null);
                 setLoading(true);
-                const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMDkwNDA4LCJleHAiOjE3MjI1MjI0MDh9.MvoLmA6S_bQaJnPsvd48PQhDby1Un4njAuTpfQ9ZhAw';
                 const url = `${import.meta.env.VITE_BACKEND_URL}/patient`;
-                const response = await axios.get(url, {
+                const response = await fetch(url, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${user?.access_token}`,
                         withCredentials: true,
                     }
                 });
-                setPatient(response.data.patient);
-                setAppointments(response.data.appointments);
-                setMedications(response.data.medications);
-                setMedicalDetails(response.data.medicalDetails);
-                setReports(response.data.reports);
+                const data = await response.json();
+                if(!response.ok) {
+                    setError(data.message)
+                    return;
+                }
+                setPatient(data.patient);
+                setAppointments(data.appointments);
+                setMedications(data.medications);
+                setMedicalDetails(data.medicalDetails);
+                setReports(data.reports);
             } catch (error) {
                 setError(error);
                 console.error('There was an error making the request!', error);

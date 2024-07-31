@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Phone, Hospital, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import { AuthContext } from '@/context/AuthContext';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -109,6 +110,7 @@ const AppointmentsTable = ({ appointments }) => (
 );
 
 const AppointmentsDisplay = () => {
+  const {user} = useContext(AuthContext);
   const [appointments, setAppointments] = useState({
     offlineAppointments: [],
     onlineAppointments: [],
@@ -126,7 +128,9 @@ const AppointmentsDisplay = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzIwMTRjMy01YmMwLTRhMzAtOTQ5Ny01NzA4YjM1NzY2NzUiLCJyb2xlIjoiRE9DVE9SIiwiZW1haWwiOiJzdWpheUBnbWFpbC5jb20iLCJpYXQiOjE3MjIxNDQ2NTYsImV4cCI6MTcyMjU3NjY1Nn0.xzyLwEu248PX8p0rnWg3sfKRrll79nLKJbZOTz5k9BU`
+            'withCredentials': true,
+            'credentials': 'include',
+            'Authorization': `Bearer ${user.access_token}`
           }
         });
         const data = await response.json();
@@ -143,6 +147,7 @@ const AppointmentsDisplay = () => {
 
         const { offlineAppointments, onlineAppointments, previousAppointments } = data;
         setAppointments({ offlineAppointments, onlineAppointments, previousAppointments });
+        // console.log(appointments)
       } catch (err) {
         setError(err.message);
       }finally{
@@ -155,11 +160,7 @@ const AppointmentsDisplay = () => {
 
   const sortedAppointments = useMemo(() => {
     const sortAppointments = (appointments) => {
-      return [...appointments].sort((a, b) => {
-        if (a.status === 'IMPORTANT' && b.status !== 'IMPORTANT') return -1;
-        if (a.status !== 'IMPORTANT' && b.status === 'IMPORTANT') return 1;
-        return new Date(a.date) - new Date(b.date);
-      });
+      return appointments
     };
 
     return {
@@ -176,7 +177,7 @@ const AppointmentsDisplay = () => {
     <ErrorBoundary>
       <Card className="w-full max-w-6xl mx-auto mt-10 mb-7">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-2xl font-bold">Appointments</CardTitle>
+          <CardTitle className="text-2xl font-bold">Today's Appointments</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="online" className="w-full">
@@ -186,21 +187,21 @@ const AppointmentsDisplay = () => {
               <TabsTrigger value="previous">Previous Appointments</TabsTrigger>
             </TabsList>
             <TabsContent value="online">
-              {sortedAppointments.onlineAppointments.length > 0 ? (
+              {sortedAppointments?.onlineAppointments?.length > 0 ? (
                 <AppointmentsTable appointments={sortedAppointments.onlineAppointments} />
               ) : (
                 <p className="text-center py-5">No online appointments scheduled.</p>
               )}
             </TabsContent>
             <TabsContent value="offline">
-              {sortedAppointments.offlineAppointments.length > 0 ? (
+              {sortedAppointments?.offlineAppointments?.length > 0 ? (
                 <AppointmentsTable appointments={sortedAppointments.offlineAppointments} />
               ) : (
                 <p className="text-center py-5">No offline appointments scheduled.</p>
               )}
             </TabsContent>
             <TabsContent value="previous">
-              {sortedAppointments.previousAppointments.length > 0 ? (
+              {sortedAppointments?.previousAppointments?.length > 0 ? (
                 <AppointmentsTable appointments={sortedAppointments.previousAppointments} />
               ) : (
                 <p className="text-center py-5">No previous appointments found.</p>

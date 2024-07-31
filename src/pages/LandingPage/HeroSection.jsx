@@ -37,7 +37,7 @@ export default function HeroSection() {
                                 We're committed to providing quality healthcare services to everyone. Our multifaceted approach involves policy changes, infrastructure improvements, and community engagement.
                             </p>
                             <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                                <Link to="/auth/login" className="flex items-center rounded text-gray-100 bg-gray-800 hover:text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300 dark:hover:text-gray-100" style={{ padding: "7px" }}>
+                                <Link to="/doctors" className="flex items-center rounded text-gray-100 bg-gray-800 hover:text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300 dark:hover:text-gray-100" style={{ padding: "7px" }}>
                                     <NotebookPen className='' />
                                     <span className="ml-2">Book Appointment</span>
                                 </Link>
