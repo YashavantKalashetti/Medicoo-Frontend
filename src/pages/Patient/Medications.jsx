@@ -6,6 +6,9 @@ import { Progress } from '@/components/ui/progress';
 import NotificationPusher from '@/Partials/NotificationPusher';
 import NotificationComponent from '@/Partials/NotificationPusher';
 import { AuthContext } from '@/context/AuthContext';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
+import { useFetch } from '@/Interceptors/FetchData';
+import { useParams } from 'react-router-dom';
 
 const medications = [
   {
@@ -114,6 +117,10 @@ const MedicationsPage = () => {
 
   const {user}= useContext(AuthContext)
 
+  const { fetchData } = useFetch();
+
+  const patientId = useParams().id;
+
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expiredMedications, setExpiredMedications] = useState([]);
@@ -124,21 +131,31 @@ const MedicationsPage = () => {
       try {
         setError(false);
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/medications`,{
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${user?.token ||'jj'}`,
-          }
-        });
-        const data = await response.json();
-        if(!response.ok) {
-          setError(data.message);
-          return;
-        }
+
+
+        // const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/medications`,{
+        //   method: 'GET',
+        //   headers: {
+        //     'Authorization': `Bearer ${user?.access_token ||'jj'}`,
+        //   }
+        // });
+        // const data = await response.json();
+        // if(!response.ok) {
+        //   setError(data.message);
+        //   return;
+        // }
+
+        const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/doctor/patient/${patientId}/medications`, {
+          method : 'GET',
+        })
+
         setMedications(data.validMediations);
         setExpiredMedications(data.expiredMedications)
+
       } catch (error) {
-        setError("Error fetching medications");
+        console.error('Error fetching medications ++++++++++++++++++:', error);
+        setError(error.message);
+        
       } finally {
         setLoading(false);
       }

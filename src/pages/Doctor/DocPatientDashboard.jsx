@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, User, FileText, Pill, Paperclip, ExternalLink, Eye, Heart, Stethoscope, ArrowUpRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { useParams, Link } from 'react-router-dom';
+import { AuthContext } from '@/context/AuthContext';
 
 const fileTypes = [
   "All",
@@ -23,6 +24,7 @@ const fileTypes = [
 ];
 
 const DocPatientDashboard = () => {
+  const {user} = useContext(AuthContext);
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedReportType, setSelectedReportType] = useState("All");
@@ -36,7 +38,7 @@ const DocPatientDashboard = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzIwMTRjMy01YmMwLTRhMzAtOTQ5Ny01NzA4YjM1NzY2NzUiLCJyb2xlIjoiRE9DVE9SIiwiZW1haWwiOiJzdWpheUBnbWFpbC5jb20iLCJpYXQiOjE3MjIxNDQ2NTYsImV4cCI6MTcyMjU3NjY1Nn0.xzyLwEu248PX8p0rnWg3sfKRrll79nLKJbZOTz5k9BU`
+            'Authorization': `Bearer ${user.access_token}`
           }
         });
 
@@ -85,7 +87,7 @@ const DocPatientDashboard = () => {
     : allReports.filter(report => report.type === selectedReportType);
 
   return (
-    <div className="p-6 dark:bg-gray-800 dark:text-white">
+    <div className="p-6 dark:bg-gray-800 dark:text-white mt-4">
       {/* Patient Details Card */}
       <Card className="mb-4 dark:bg-gray-700">
         <CardHeader>

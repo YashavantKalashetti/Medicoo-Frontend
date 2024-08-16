@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Link, useParams } from 'react-router-dom';
 import CustomLoader from '@/Partials/CustomLoader';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 const EnhancedPrescription = () => {
   const [prescription, setPrescription] = useState(null);
@@ -20,19 +21,11 @@ const EnhancedPrescription = () => {
     const fetchPrescription = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions/${id}`, {
+        
+        const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions/${id}`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTA4NzM4LCJleHAiOjE3MjI1NDA3Mzh9.4up3e1O7Gez0nnCuFKvcbkQvbE5mpSl6uehf_4o2nDE`
-          }
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch prescription');
-        }
-
-        const data = await response.json();
         setPrescription(data.prescription);
 
       } catch (err) {

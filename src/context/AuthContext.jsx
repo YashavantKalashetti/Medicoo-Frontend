@@ -31,9 +31,9 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (state.user) {
-      setCookie('access_token', state.user.access_token);
-    }
+    // if (state.user) {
+    //   setCookie('access_token', state.user.access_token);
+    // }
   }, [state.user, setCookie]);
 
   return (

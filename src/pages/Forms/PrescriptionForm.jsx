@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { message } from 'antd';
 import { set } from 'react-hook-form';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 const   PrescriptionForm = () => {
   const [medications, setMedications] = useState([]);
@@ -54,28 +55,21 @@ const   PrescriptionForm = () => {
         values.medications = medications;
         values.attachments = attachments;
 
-        console.log('Submitted values:', values);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor/patient/${patientId}`, {
+        const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/doctor/patient/${patientId}`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzIwMTRjMy01YmMwLTRhMzAtOTQ5Ny01NzA4YjM1NzY2NzUiLCJyb2xlIjoiRE9DVE9SIiwiZW1haWwiOiJzdWpheUBnbWFpbC5jb20iLCJpYXQiOjE3MjE5NzE0MjAsImV4cCI6MTcyMjQwMzQyMH0.IDh_j8EaGeCY3HzEM2Dus25yv_vjNzX4J431PAGdBHU`
-          },
-          body: JSON.stringify(values)
-        })
-  
-        if(response.ok) {
-          message.success('Prescription submitted successfully!');
-          setMedications([]);
-          setAttachments([]);
-          event.target.reset();
-        } else {
-          message.error('Failed to submit prescription!');
-        }
+          body: JSON.stringify(values) 
+        });
+
+        message.success('Prescription submitted successfully!');
+        setMedications([]);
+        setAttachments([]);
+        event.target.reset();
+
       }else{
         message.error('Please fill all the fields');
       }
+      
     } catch (error) {
       message.error('Failed to submit prescription!');
     }finally{
@@ -144,7 +138,7 @@ const   PrescriptionForm = () => {
 
   return (
     <form onSubmit={onSubmit} className="mt-10 max-w-4xl mx-auto p-6 rounded-lg">
-      <Card className="bg-white">
+      <Card className="bg-white dark:bg-gray-800">
         <CardHeader>
           <h2 className="text-3xl font-bold text-center text-primary">Prescription Form</h2>
         </CardHeader>
@@ -176,31 +170,31 @@ const   PrescriptionForm = () => {
                     placeholder="Medicine"
                     value={med.medicine}
                     onChange={(e) => handleMedicationChange(index, 'medicine', e.target.value)}
-                    className="bg-gray-50"
+                    className="bg-gray-50 dark:bg-gray-700"
                   />
                   <Input
                     placeholder="Dosage"
                     value={med.dosage}
                     onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
-                    className="bg-gray-50"
+                    className="bg-gray-50 dark:bg-gray-700"
                   />
                   <Input
                     placeholder="Instruction"
                     value={med.instruction}
                     onChange={(e) => handleMedicationChange(index, 'instruction', e.target.value)}
-                    className="bg-gray-50"
+                    className="bg-gray-50 dark:bg-gray-700"
                   />
                   <Input
                     placeholder="Number of Days"
                     value={med.numberOfDays}
                     onChange={(e) => handleMedicationChange(index, 'numberOfDays', e.target.value)}
-                    className="bg-gray-50"
+                    className="bg-gray-50 dark:bg-gray-700"
                   />
                   <Input
                     placeholder="Number of Times"
                     value={med.numberOfTimes}
                     onChange={(e) => handleMedicationChange(index, 'numberOfTimes', e.target.value)}
-                    className="bg-gray-50"
+                    className="bg-gray-50 dark:bg-gray-700"
                   />
                 </div>
                 {errors[`medication-${index}`] && (
@@ -212,7 +206,7 @@ const   PrescriptionForm = () => {
                   type="button"
                   variant="destructive"
                   size="sm"
-                  className="mt-4"
+                  className="mt-4 bg-red-500 hover:bg-red-400 dark:bg-red-800 text-white"
                   onClick={() => handleRemoveMedication(index)}
                 >
                   <MinusIcon className="w-4 h-4 mr-2" /> Remove Medication

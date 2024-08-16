@@ -8,6 +8,7 @@ import { Calendar, Clock, Phone, Hospital, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { AuthContext } from '@/context/AuthContext';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -124,20 +125,23 @@ const AppointmentsDisplay = () => {
     const fetchAppointments = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor/appointments`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'withCredentials': true,
-            'credentials': 'include',
-            'Authorization': `Bearer ${user.access_token}`
-          }
-        });
-        const data = await response.json();
+        // const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/doctor/appointments`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'withCredentials': true,
+        //     'credentials': 'include',
+        //     'Authorization': `Bearer ${user.access_token}`
+        //   }
+        // });
 
-        if (!response.ok) {
-          throw new Error(data.message || 'Something went wrong!');
-        }
+        const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/doctor/appointments`, {
+          method: 'GET',
+        })
+
+        // if (!response.ok) {
+        //   throw new Error(data.message || 'Something went wrong!');
+        // }
 
         if (data?.message === 'No appointments found') {
           setAppointments({ offlineAppointments: [], onlineAppointments: [], previousAppointments: [] });

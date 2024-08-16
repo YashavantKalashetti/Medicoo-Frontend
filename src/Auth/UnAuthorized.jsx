@@ -27,7 +27,7 @@ const UnauthorizedAccess = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-red-600 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl font-bold text-red-600 dark:text-red-400">
@@ -42,6 +42,7 @@ const UnauthorizedAccess = () => {
           <p className="text-sm text-gray-600 dark:text-gray-400">
             You will be redirected to the previous page in {countdown} seconds.
           </p>
+          
         </CardContent>
         <CardFooter>
           <Button

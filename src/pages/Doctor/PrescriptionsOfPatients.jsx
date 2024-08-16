@@ -4,10 +4,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Calendar, User, MessageCircle, Paperclip, Pill, Search } from 'lucide-react';
+import { AlertCircle, Calendar, User, MessageCircle, Paperclip, Pill, Search, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import CustomLoader from '@/Partials/CustomLoader';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 const PrescriptionCard = ({ prescription }) => (
     <Card className="mb-4">
@@ -32,7 +33,7 @@ const PrescriptionCard = ({ prescription }) => (
         </div>
         <div className="flex items-center text-sm">
           <User className="w-4 h-4 mr-2" />
-          Dr. {prescription.doctor.name} ({prescription.doctor.specialization})
+          Dr. {prescription?.doctor?.name} ({prescription?.doctor?.specialization})
         </div>
         {prescription.instructionForOtherDoctor && (
           <div className="flex items-start text-sm mt-2">
@@ -62,6 +63,7 @@ const PrescriptionCard = ({ prescription }) => (
 const PrescriptionList = ({ prescriptions }) => {
   return (
     <div className="space-y-4">
+      {prescriptions.length === 0 && <p>No prescriptions available</p>}
       {prescriptions.map((prescription, index) => (
         <PrescriptionCard key={index} prescription={prescription} />
       ))}
@@ -74,25 +76,17 @@ const PrescriptionsOfPatients = () => {
   const [allPrescriptions, setAllPrescriptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const id = useParams().id;
 
   useEffect(() => {
     (
       async () => {
         try {
           setLoading(true);
-          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions`, {
-            headers: { 'Content-Type': 'application/json',
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTA4NzM4LCJleHAiOjE3MjI1NDA3Mzh9.4up3e1O7Gez0nnCuFKvcbkQvbE5mpSl6uehf_4o2nDE`
-             },
-            credentials: 'include'
+
+          const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/doctor/patient/${id}/prescriptions`, {
+            method: "GET"
           });
-  
-          const data = await response.json();
-  
-          if (!response.ok) {
-            setError(data?.msg);
-            return;
-          }
   
           const temp =  [...data.normalPrescriptions, ...data.importantPrescriptions]
           setAllPrescriptions(temp);
@@ -114,11 +108,11 @@ const PrescriptionsOfPatients = () => {
     (activeTab === 'all' || 
      (activeTab === 'important' && p.prescriptionType === 'IMPORTANT') ||
      (activeTab === 'normal' && p.prescriptionType === 'NORMAL')) &&
-    (p.doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p?.doctor?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
      p.instructionForOtherDoctor?.toLowerCase().includes(searchTerm.toLowerCase()) ||
      p.medications.some(m => m.medicine.toLowerCase().includes(searchTerm.toLowerCase())) ||
     format(new Date(p.date), 'PPP').toLowerCase().includes(searchTerm.toLowerCase()) ||
-     p.doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase()))
+     p?.doctor?.specialization?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if(loading) {

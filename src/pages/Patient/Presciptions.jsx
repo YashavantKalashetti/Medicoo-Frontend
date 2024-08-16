@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import CustomLoader from '@/Partials/CustomLoader';
 import { Button, message, Popover } from 'antd';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 const style= {
   display: 'flex',
@@ -21,23 +22,15 @@ const PrescriptionCard = ({ prescription }) => {
 
   const toggleDisplayable = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions/${prescription.id}?status=${!prescription.displayable}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTQyNzEwLCJleHAiOjE3MjI1NzQ3MTB9.lV908kuFYHqRZarUG3But17RWCBLNvqchhV1cqFYvsU`
-        },
-        body: JSON.stringify({ displayable: !isDisplayable })
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to update prescription visibility');
-      }
+      await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions/${prescription.id}?status=${!prescription.displayable}`,{
+        method: 'PATCH',
+      })
 
       setIsDisplayable((prev) => !prev);
       message.success('Prescription visibility updated successfully');
     } catch (error) {
-      console.error(error.message);
+      // console.error(error.message);
       message.error('Failed to update prescription visibility');
     }
   };
@@ -123,19 +116,10 @@ const PatientPrescriptions = () => {
       async () => {
         try {
           setLoading(true);
-          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions`, {
-            headers: { 'Content-Type': 'application/json',
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTA4NzM4LCJleHAiOjE3MjI1NDA3Mzh9.4up3e1O7Gez0nnCuFKvcbkQvbE5mpSl6uehf_4o2nDE`
-             },
-            credentials: 'include'
-          });
   
-          const data = await response.json();
-  
-          if (!response.ok) {
-            setError(data?.msg);
-            return;
-          }
+          const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/patient/prescriptions`, {
+            method: "GET"
+          })
   
           const temp =  [...data.normalPrescriptions, ...data.importantPrescriptions]
           setAllPrescriptions(temp);
@@ -173,7 +157,7 @@ const PatientPrescriptions = () => {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 m-7">
+    <div className="w-full max-w-3xl mx-auto p-4 m-7 border-2">
       <h2 className="text-2xl font-bold mb-6">Patient Prescriptions</h2>
       <div className="mb-4">
         <Input

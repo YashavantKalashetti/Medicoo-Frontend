@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { MapPin, MessageSquare, Phone, Star, Clock, DollarSign, Award, Book, X } from 'lucide-react';
+import { MapPin, MessageSquare, Phone, Star, Clock, DollarSign, Award, Book, X, UserRoundX, UserRound } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { message } from 'antd';
+import { Button, message } from 'antd';
+import { AuthContext } from '@/context/AuthContext';
 
 const DoctorAppointmentPage = () => {
   const { id } = useParams();
@@ -20,7 +21,7 @@ const DoctorAppointmentPage = () => {
   const [socket, setSocket] = useState(null);
   const [fetching, setFetching] = useState(true);
 
-  const userId = '1234';
+  const {user} = useContext(AuthContext)
 
   // ... (keep other existing state and effects)
   const AppointmentTypeDropdown = ({ value, onChange }) => {
@@ -68,7 +69,7 @@ const DoctorAppointmentPage = () => {
   useEffect(() => {
     if (!doctorData) return;
 
-    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${userId}&type=doctor&id=${id}`);
+    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${user.userId}&type=doctor&id=${id}`);
     setSocket(newSocket);
 
     newSocket.onopen = () => console.log('WebSocket connection for time slots opened');
@@ -79,7 +80,7 @@ const DoctorAppointmentPage = () => {
           ...prevData,
           availableSlotsByDate: details.availableSlotsByDate
         }));
-        console.log('Time slots updated: ----------#####-----------------########');
+        // console.log('Time slots updated: ----------#####-----------------########');
       }
     };
 
@@ -100,7 +101,7 @@ const DoctorAppointmentPage = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTYzMTI0LCJleHAiOjE3MjI1OTUxMjR9.CDKhqA0QKvTOgDKuQwgTDFgakNncTgvRJFwglGNOIfk`,
+            'Authorization': `Bearer ${user.access_token}`,
           },
           body: JSON.stringify({
             doctorId: id,
@@ -111,20 +112,26 @@ const DoctorAppointmentPage = () => {
           }),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-          const data = await response.json();
-          console.log('Error booking appointment:', data?.message);
-          throw new Error('Error booking appointment');
+          message.error(data?.message || 'Error booking appointment');
         }
 
-    } catch (error) {
-      console.log('Error booking appointment:', error);
-      message.error('Error booking appointment')
-    }
+        setShowBookingConfirmation(false);
+        message.success(data?.message || 'Appointment booked successfully');
 
-    setShowBookingConfirmation(false);
-    message.success('Appointment booked successfully');
+    } catch (error) {
+      message.error('Error booking appointment')
+    }finally{
+      setSelectedTime(null);
+    }
+    
   };
+
+  const handelEmergencyAppointment = () =>{
+    alert("Feature will be implemented soon.\n\n This feature is available only if the doctor is online for consultation.")
+  }
 
   const renderDateButtons = useCallback(() => {
     if (!doctorData || !doctorData.availableSlotsByDate) return null;
@@ -289,7 +296,17 @@ const DoctorAppointmentPage = () => {
             >
               {/* Left section */}
               <div className="w-full md:w-2/3 p-8">
-                <h1 className={`text-3xl font-bold mb-6 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Make an Appointment</h1>
+                <div className='dflex-jac mb-6' style={{justifyContent:"space-between"}}>
+                    <h1 className={`text-3xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Make an Appointment</h1>
+
+                    <div className={`border-2 border-solid rounded-full p-2 ${doctor.availableForConsult ? 'bg-green-500' : 'bg-red-500'}`}>
+                        {doctor.availableForConsult ? (
+                              <UserRound className="text-white" />
+                            ) : (
+                              <UserRoundX className="text-white" />
+                        )}
+                    </div>
+                </div>
 
                 {/* Appointment Type Dropdown */}
                 <AppointmentTypeDropdown value={appointmentType} onChange={setAppointmentType} isDarkTheme={isDarkTheme} />
@@ -315,7 +332,7 @@ const DoctorAppointmentPage = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-full md:w-1/2 ${
+                    className={`w-full m-1 md:w-1/2 ${
                       isDarkTheme
                         ? 'bg-green-600 hover:bg-green-700'
                         : 'bg-green-500 hover:bg-green-600'
@@ -325,6 +342,23 @@ const DoctorAppointmentPage = () => {
                   >
                     Book Appointment
                   </motion.button>
+
+                  {
+                    doctor.availableForConsult &&  (
+                      <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`w-full m-1 md:w-1/2 ${
+                            isDarkTheme
+                              ? 'bg-red-600 hover:bg-red-900'
+                              : 'bg-red-400 hover:bg-red-600'
+                          } text-white py-3 rounded-lg font-semibold transition-all duration-300`}
+                          onClick={handelEmergencyAppointment}
+                        >
+                          Emergency Appointment
+                      </motion.button>
+                    )
+                  }
                 </div>
               </div>
 
@@ -341,7 +375,7 @@ const DoctorAppointmentPage = () => {
                   <p className="text-gray-600 mb-2">{doctor.specialization}</p>
                   <div className="flex items-center">
                     {[...Array(5)].map((_, index) => (
-                      <Star key={index} className={`w-4 h-4 ${index < Math.round(doctor.rating) ? 'text-yellow-400' : 'text-gray-300'} mr-1`} fill="currentColor" />
+                      <Star key={index} className={`w-4 h-4 ${index < Math.round(doctor.rating || 3) ? 'text-yellow-400' : 'text-gray-300'} mr-1`} fill="currentColor" />
                     ))}
                   </div>
                 </motion.div>

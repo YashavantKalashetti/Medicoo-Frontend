@@ -48,8 +48,7 @@ const MedicalSignInForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'withCredentials': true,
-          'credentials': 'include',
+          credentials: 'include',
         },
         body: JSON.stringify({ email, password, userType }),
       });
@@ -59,6 +58,7 @@ const MedicalSignInForm = () => {
         message.error(data.message);
       } else {
         message.success("Logged In successfully");
+        console.log(data?.cookie)
         dispatch({type: 'LOGIN', payload: data})
         navigate(from, { replace: true });
       }
@@ -133,15 +133,17 @@ const MedicalSignInForm = () => {
                 <div className="space-y-2">
                   <Label htmlFor="userType" className="text-gray-700 dark:text-gray-100">Sign in as</Label>
                   <Select className="bg-gray-0 dark:bg-gray-600" onValueChange={setUserType} required>
-                    <SelectTrigger className="w-full" onMouseDown={stopPropagation} onTouchStart={stopPropagation}>
+                    <SelectTrigger className="w-full" >
                       <UserRoundCheck className="text-gray-400" size={18} />
                       <SelectValue className='bg-gray-50 dark:bg-gray-100' placeholder="Select user type" />
                     </SelectTrigger>
-                    <SelectContent onMouseDown={stopPropagation} onTouchStart={stopPropagation}>
-                      <SelectItem value="patient" className="bg-gray-50 dark:bg-gray-600">Patient</SelectItem>
-                      <SelectItem value="doctor" className="bg-gray-50 dark:bg-gray-600 mt-1 mb-1">Doctor</SelectItem>
-                      <SelectItem value="hospital" className="bg-gray-50 dark:bg-gray-600">Hospital</SelectItem>
-                    </SelectContent>
+                    {/* <div onClick="$event.stopPropagation()"> */}
+                      <SelectContent>
+                        <SelectItem value="patient" className="bg-gray-50 dark:bg-gray-600">Patient</SelectItem>
+                        <SelectItem value="doctor" className="bg-gray-50 dark:bg-gray-600 mt-1 mb-1">Doctor</SelectItem>
+                        <SelectItem value="hospital" className="bg-gray-50 dark:bg-gray-600">Hospital</SelectItem>
+                      </SelectContent>
+                    {/* </div> */}
                   </Select>
                 </div>
 
@@ -153,12 +155,12 @@ const MedicalSignInForm = () => {
 
                 {
                   loading ? (
-                    <Button disabled className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg" >
+                    <Button disabled className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:shadow-lg" >
                       <Loader2 className="animate-spin" />
                       Please wait
                     </Button>
                   ) : (
-                    <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                    <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:shadow-lg">
                       Sign in
                     </Button>
                   )

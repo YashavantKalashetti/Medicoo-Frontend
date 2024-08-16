@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, User, Phone, ExternalLink, Hospital } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import { AuthContext } from '@/context/AuthContext';
 
 
 class ErrorBoundary extends React.Component {
@@ -120,6 +121,7 @@ const AppointmentRow = ({ appointment }) => (
   );
   
   const PatientAppointments = () => {
+    const {user} = useContext(AuthContext);
     const [appointments, setAppointments] = useState({
       offlineAppointments: [],
       onlineAppointments: [],
@@ -137,7 +139,7 @@ const AppointmentRow = ({ appointment }) => (
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjRiODI5NS1iZWQxLTRjMDgtYTRhZC0xNGZiMjY4ZmRlOWUiLCJyb2xlIjoiUEFUSUVOVCIsImVtYWlsIjoieWFzaHdhbnRrYWxhc2hldHRpODEzMTE1MThAZ21haWwuY29tIiwiaWF0IjoxNzIyMTQyNzEwLCJleHAiOjE3MjI1NzQ3MTB9.lV908kuFYHqRZarUG3But17RWCBLNvqchhV1cqFYvsU`
+              'Authorization': `Bearer ${user.access_token}`
             }
           });
           const data = await response.json();

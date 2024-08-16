@@ -50,14 +50,14 @@ const DoctorCard = ({ doctor }) => (
           </motion.div>
         </div>
         <div className="p-4">
-          <Link to={`/appointments/${doctor.id} `}> <h3 className="text-xl font-semibold text-gray-900 mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>{doctor.name}</h3></Link>
+          <Link to={`/doctors/${doctor.id} `}> <h3 className="text-xl font-semibold text-gray-900 mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>{doctor.name}</h3></Link>
           <p className="text-sm font-medium text-custom_blue mb-2" style={{ fontFamily: 'Roboto, sans-serif' }}>{doctor.specialization.charAt(0).toUpperCase() + doctor.specialization.slice(1).toLowerCase()}</p>
           <div className="flex items-center mb-4">
             <Star className="w-5 h-5 text-yellow-400 mr-1" />
             <span className="text-sm font-medium text-gray-700" style={{ fontFamily: 'Roboto, sans-serif' }}>{doctor.rating.toFixed(1)} Rating</span>
           </div>
           <Button className="w-full bg-custom_blue hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors duration-300" style={{ fontFamily: 'Roboto, sans-serif' }}>
-          <Link to={`/appointments/${doctor.id} `}> Book Appointment </Link>
+          <Link to={`/doctors/${doctor.id} `}> Book Appointment </Link>
           </Button>
         </div>
       </CardContent>

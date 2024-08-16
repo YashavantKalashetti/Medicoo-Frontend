@@ -153,12 +153,11 @@ function App() {
             <Route element={<RequireAuth allowedRoles={['DOCTOR']} />}>
               <Route path="/doctor" element={<DoctorDashboard />} />
               <Route path="/doctor/appointments" element={<AppointmentsDisplay/>} />
-              <Route path="/appointments/:id" element={<DoctorAppointmentPage/>} />
               {/* <Route path="/doctor/appointments/:id" element={<AppointmentDetail />} /> */}
               <Route path="/p/:id" element={<DocPatientDashboard />} />
               <Route path="/p/:id/medications" element={<MedicationsPage />} />
               <Route path="/p/:id/reports" element={<PatientReportsPage />} />
-              <Route path="/p/:id/prescriptions" element={<PrescriptionForm/>} />
+              <Route path="/p/:id/prescription" element={<PrescriptionForm />} />
               <Route path="/p/:id/prescriptions" element={<PrescriptionsOfPatients />} />
             </Route>
 

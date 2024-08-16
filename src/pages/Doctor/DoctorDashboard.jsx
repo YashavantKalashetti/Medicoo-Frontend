@@ -41,12 +41,12 @@ const DoctorDashboard = () => {
         if (data.error) {
           throw new Error(data.error);
         }
-        console.log(data.onlineAppointments);
+        // console.log(data.onlineAppointments);
         setDoctor(data.doctor);
         setOnlineAppointments(data.onlineAppointments);
         setOfflineAppointments(data.offlineAppointments);
       } catch (error) {
-        console.error('Error fetching doctor data:', error);
+        // console.error('Error fetching doctor data:', error);
         setError('An error occurred while fetching doctor data.');
       }finally{
         setLoading(false);

@@ -8,10 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Hospital, Phone, Mail, MapPin, ScrollText, Star, GraduationCap, Languages, Map, ChevronRight, Users } from 'lucide-react';
 import MapComponent from '@/Auth/MapComponent';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CustomLoader from '@/Partials/CustomLoader';
 
 const HospitalProfile = () => {
+
+  const navigate = useNavigate();
   const [hospital, setHospital] = useState(null);
   const [error, setError] = useState(null);
   const { id } = useParams();
@@ -196,7 +198,7 @@ const HospitalProfile = () => {
                                 <Languages className="mr-1 h-4 w-4" /> 
                                 {doctor.languages.join(', ')}
                               </p>
-                              <Button variant="outline" className="w-full mt-2">
+                              <Button variant="outline" onClick={()=> navigate(`/doctors/${doctor.id}`)} className="w-full mt-2">
                                 View Profile <ChevronRight className="ml-2 h-4 w-4" />
                               </Button>
                             </div>
@@ -235,7 +237,7 @@ const HospitalProfile = () => {
                             <Badge variant={doctor.availableForConsult ? "success" : "destructive"}>
                               {doctor.availableForConsult ? "Available" : "Unavailable"}
                             </Badge>
-                            <Button variant="outline" size="sm">
+                            <Button onClick={()=> navigate(`/doctors/${doctor.id}`)} variant="outline" size="sm">
                               View Profile <ChevronRight className="ml-1 h-4 w-4" />
                             </Button>
                           </div>
