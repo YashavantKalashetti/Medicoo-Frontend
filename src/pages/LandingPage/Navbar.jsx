@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Heart, User, Menu, X, HeartPulse, LogOut, SunMoon, Sun, Moon } from 'lucide-react';
 import NotificationComponent from '@/Auth/Notification';
@@ -8,10 +8,13 @@ import AllSearchButton from '@/Partials/AllSearchButton';
 import { AuthContext } from '@/context/AuthContext';
 import { Button } from 'antd';
 import { useTheme } from 'next-themes';
+import EmergencyNotificationSystem from '@/Partials/EmergencyNotificationPopUp';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const childRef = useRef();
 
   const {user, dispatch} = useContext(AuthContext)
 
@@ -20,16 +23,20 @@ const Navbar = () => {
   };
 
   const logoutUser = () => {
+    if (childRef.current) {
+      childRef.current.callChildFunction();
+    }
     dispatch({type: 'LOGOUT'});
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-700 shadow-sm fixed w-full z-10" style={{zIndex:"60"}}>
+    <nav className="bg-white dark:bg-gray-700 shadow-smnpm strat w-full z-10" style={{zIndex:"60"}}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <HeartPulse className="h-8 w-8 text-blue-500" />
+              <EmergencyNotificationSystem ref={childRef} />
               <span className="ml-2 text-xl font-bold text-gray-800 dark:text-gray-100 dark:hover:text-gray-900 hover:duration-300">Medicoo</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">

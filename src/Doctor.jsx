@@ -20,7 +20,6 @@ const DoctorDetails = () => {
 
     newSocket.onmessage = (event) => {
       const { details } = JSON.parse(event.data);
-      console.log('Message from doctor details:', details);
       setDoctor(details);
       setError(null);
     };

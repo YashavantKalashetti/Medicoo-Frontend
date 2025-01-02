@@ -74,6 +74,7 @@ const HospitalLocator = () => {
         message.info('Please Login in. It would be easy to locate and get your details.')
       }
       setNotifying(true);
+
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/emergency-consult`, {
         method: 'POST',
         headers: {
@@ -86,12 +87,13 @@ const HospitalLocator = () => {
           patientId,
         }),
       });
+
       if (!response.ok) {
         throw new Error('Failed to send notification');
       }
       const data = await response.json();
-      if(data.message.includes('offline') || data.message.includes('unreachable') || data.message.includes('not')){
-        message.error(data.message);
+      if(data.msg.includes('offline') || data.msg.includes('unreachable') || data.msg.includes('not')){
+        message.error(data.msg);
       }else{
         message.success(data.msg);
       }
@@ -104,8 +106,9 @@ const HospitalLocator = () => {
 
 
   return (
-    <div className="p-4 mx-auto mt-5 dark:bg-gray-800 dark:text-white">
-      <h1 className="text-2xl font-bold mb-4">Hospital Locator</h1>
+    <div className="p-4 mx-auto dark:bg-gray-800 dark:text-white">
+      <h1 className="text-2xl mt-10 font-bold mb-4"> {} </h1>
+      <h1 className="text-2xl mt-10 font-bold mb-4">Hospital Locator</h1>
       <div className="flex items-center justify-center">
         {location && (
           <h3 className="m-5 text-xl">

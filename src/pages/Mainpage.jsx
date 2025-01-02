@@ -2,7 +2,6 @@
 import NotificationComponent from '@/Auth/Notification'
 import Navbar from './LandingPage/Navbar'
 import { Outlet } from 'react-router-dom'
-import EmergencyNotificationSystem from '@/Partials/EmergencyNotificationPopUp'
 import EmergencyButton from '@/Partials/EmergencyButton'
 import EmergencyNotificationButton from '@/Partials/EmergencyButton'
 import Footer from './LandingPage/Footer'
@@ -13,8 +12,7 @@ export default function Mainpage() {
     <div>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <Navbar />
-        <EmergencyNotificationSystem />
-        <Outlet/>
+          <Outlet/>
         <Footer />
       </ThemeProvider>
     </div>

@@ -67,9 +67,9 @@ const DoctorAppointmentPage = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!doctorData) return;
+    if (!doctorData || !user?.userId) return;
 
-    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${user.userId}&type=doctor&id=${id}`);
+    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${user?.userId}&type=doctor&id=${id}`);
     setSocket(newSocket);
 
     newSocket.onopen = () => console.log('WebSocket connection for time slots opened');
@@ -91,6 +91,10 @@ const DoctorAppointmentPage = () => {
   }, [fetching]);
 
   const handleBookAppointment = useCallback(() => {
+    if(!user || !user.userId){
+      message.error('Please login to book appointment');
+      return;
+    }
     setShowBookingConfirmation(true);
   }, []);
 
@@ -145,7 +149,7 @@ const DoctorAppointmentPage = () => {
         }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`px-4 py-2 rounded-full ${
+        className={`px-4 py-2 rounded-full border-2 border-black-200 ${
           selectedDate === slot.date
             ? isDarkTheme ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
             : isDarkTheme
@@ -170,7 +174,7 @@ const DoctorAppointmentPage = () => {
             onClick={() => setSelectedTime(slot.time)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-2 rounded-lg text-center transition-all duration-300 ${
+            className={`p-2 rounded-lg text-center transition-all border-2 border-black-100 duration-300 ${
               selectedTime === slot.time
                 ? isDarkTheme ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-500 text-white shadow-md'
                 : slot.isBooked
@@ -280,7 +284,7 @@ const DoctorAppointmentPage = () => {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-      <div className={`flex h-screen font-['Poppins',sans-serif] mt-20 mb-20 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}>
+      <div className={`flex h-screen font-['Poppins',sans-serif] dark:bg-gray-600 mb-20 ${isDarkTheme ? 'bg-gray-900 text-white' : 'text-gray-800'}`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -2,7 +2,6 @@ import Navbar from "./LandingPage/Navbar";
 import '../css/homepage.css'
 import { Button } from "@/components/ui/button";
 import NotificationButton from "@/Auth/Notification";
-import EmergencyNotificationSystem from "@/Partials/EmergencyNotificationPopUp";
 
 
 export default function HomePage() {

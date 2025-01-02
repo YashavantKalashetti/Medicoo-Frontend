@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, Avatar, Typography, Divider, List, Tag, Tabs, Row, Col, Statistic, Timeline, Button, Space, Badge, Empty } from 'antd';
+import { Card, Avatar, Typography, Divider, List, Tag, Tabs, Row, Col, Statistic, Timeline, Button, Space, Badge, Empty, message } from 'antd';
 import { PhoneOutlined, MailOutlined, EnvironmentOutlined, CalendarOutlined, TeamOutlined, StarOutlined, ClockCircleOutlined, UserOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { ScrollText } from 'lucide-react';
@@ -24,72 +24,9 @@ import { Link } from 'react-router-dom';
 import { set } from 'react-hook-form';
 import CustomLoader from '@/Partials/CustomLoader';
 import { AuthContext } from '@/context/AuthContext';
+import AssignDoctorLogo from './AssignDoctor';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
-
-// const tempHospital = {
-//   "id": "66adfd3e-eba2-4a84-9a09-9b443084d2a5",
-//   "name": "BMS Hospital",
-//   "hospital_number": "HS6045314",
-//   "contactNumber": "8045088888",
-//   "email": "bms@email.com",
-//   "address": "No 618, Sri Mallikarjuna Swamy, Gangamma Temple St, NR Colony, Bengaluru, Karnataka 560019",
-//   "description": "MBBS, MS (General Surgery), M.Ch (Cardiothoracic Surgery), Fellowship in Heart & Lung transplant, Hannover Medical School, Fellowship in Minimally Invasive Cardiac Surgery, Lipzig Heart Centre, Germany",
-//   "speciality": "SUPER_SPECIALTY",
-//   "latitude": 12.9411334,
-//   "longitude": 77.5649215,
-//   "availableForConsult": false,
-//   "createdAt": "2024-06-22T11:56:44.462Z",
-//   "updatedAt": "2024-06-28T13:29:36.886Z",
-//   "registeredDoctors": [
-//       {
-//           "id": "002c94b1-8313-4528-a164-c4269ccca19c",
-//           "name": "Kavya Reddy",
-//           "email": "kavya.reddy@example.com",
-//           "contactNumber": "9812341234",
-//           "specialization": "ENDOCRINOLOGIST",
-//           "address": "JP Nagar, Bangalore",
-//           "rating": 0,
-//           "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-//       },
-//       {
-//           "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
-//           "name": "Yagya",
-//           "email": "yagyabhatt@gmail.com",
-//           "contactNumber": "8185626810",
-//           "specialization": "CARDIOLOGIST",
-//           "address": "Jaksandra extension, KKormangala",
-//           "rating": 0,
-//           "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-//       }
-//   ],
-//   "registeredPatients": []
-// }
-// const todayAppointment = []
-// const previousAppointments = []
-// const registeredDoctors = [
-//   {
-//       "id": "002c94b1-8313-4528-a164-c4269ccca19c",
-//       "name": "Kavya Reddy",
-//       "email": "kavya.reddy@example.com",
-//       "contactNumber": "9812341234",
-//       "specialization": "ENDOCRINOLOGIST",
-//       "address": "JP Nagar, Bangalore",
-//       "rating": 0,
-//       "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-//   },
-//   {
-//       "id": "0c8d9b9a-d1bb-47e4-9346-3be40e643445",
-//       "name": "Yagya",
-//       "email": "yagyabhatt@gmail.com",
-//       "contactNumber": "8185626810",
-//       "specialization": "CARDIOLOGIST",
-//       "address": "Jaksandra extension, KKormangala",
-//       "rating": 0,
-//       "avatar": "https://res.cloudinary.com/dobgzdpic/image/upload/v1719312099/DoctorDefault_rbglsf.png"
-//   }
-// ]
-// const patientsCount = 0
-// const emergencyAppointments = [{}]
 
 const HospitalDashboard = () => {
 
@@ -113,7 +50,6 @@ const HospitalDashboard = () => {
   const fetchHospital = async () => {
     try {
       setLoading(true);
-      console.log("Fetching hospital data")
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital`, {
         method: 'GET',
         headers: {
@@ -124,7 +60,7 @@ const HospitalDashboard = () => {
       const data = await response.json();
       if(response.status >= 400) {
         setError(data?.message || 'Something went wrong');
-        return
+        return;
       }
       // console.log("previous Days",data.previousAppointments)
       // console.log("Todays appointments", data.todayAppointment)
@@ -143,19 +79,48 @@ const HospitalDashboard = () => {
   };
 
   const toggleAvailability = async () => {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital/setAvailability?availability=${!hospital.availableForConsult}`,{
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user?.access_token}`
-      },
-    })
-    setHospital(prevHospital => ({
-      ...prevHospital,
-      availableForConsult: !prevHospital.availableForConsult
-    }));
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital/setAvailability?availability=${!hospital.availableForConsult}`,{
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.access_token}`
+        },
+      })
+  
+      if(response.status >= 400) {
+        const data = await response.json();
+        setError(data?.message || 'Something went wrong');
+        return;
+      }
+  
+      setHospital(prevHospital => ({
+        ...prevHospital,
+        availableForConsult: !prevHospital.availableForConsult
+      }));
+    } catch (error) {
+      setError('Unable to update availability');
+    }
   };
 
+
+  const handleAssign = async (doctorId, appointment) => {
+    // Make your API call here to assign the doctor
+    try {
+      const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/hospital/appointDoctorForEmergency`, {
+        method: 'POST',
+        body: JSON.stringify({
+          doctorId,
+          appointment
+        })
+      });
+
+      message.success(data.msg || 'Doctor assigned successfully');
+    } catch (error) {
+      message.error( error?.message || 'Failed to assign doctor');
+    }
+
+  };
 
   const StatCard = ({ title, value, icon, color }) => (
     <Card hoverable style={{ height: '100%' }}>
@@ -337,9 +302,17 @@ const HospitalDashboard = () => {
                     {todayAppointment.map((appointment, index) => (
                       <Timeline.Item key={index} label={appointment?.time}>
                         <Card size="small">
-                          Appointment with Dr. {appointment?.doctor?.name}
+                          {
+                            appointment?.doctor?.name ?
+                              `Appointment with Dr. ${appointment?.doctor?.name} - ${appointment?.doctor?.contactNumber}` :
+                              <div className='dflex-jac'>
+                                <AssignDoctorLogo doctors={hospital?.registeredDoctors} appointment={appointment} onAssign={handleAssign} />
+                                <p className='text-red-500' >Emergency Appointment Doctor not assigned</p>
+                               </div>
+                          }
                           <br />
-                          Patient: {appointment?.patient?.name}
+                          <p>Patient: {appointment?.patient?.name}</p>
+                          <p>Contact: {appointment?.patient?.contactNumber}</p>
                         </Card>
                       </Timeline.Item>
                     ))}
@@ -354,9 +327,14 @@ const HospitalDashboard = () => {
                     {previousAppointments.map((appointment, index) => (
                       <Timeline.Item key={index} label={appointment?.time}>
                         <Card size="small">
-                          Appointment with Dr. {appointment?.doctor?.name}
+                          {
+                            appointment?.doctor?.name ?
+                            `Appointment with Dr. ${appointment?.doctor?.name} - ${appointment?.doctor?.contactNumber}` : 
+                            <p className='text-red-500' >Emergency Appointment Doctor not assigned</p>
+                          }
                           <br />
-                          Patient: {appointment?.patient?.name}
+                          <p>Patient: {appointment?.patient?.name}</p>
+                          <p>Contact: {appointment?.patient?.contactNumber}</p>
                         </Card>
                       </Timeline.Item>
                     ))}

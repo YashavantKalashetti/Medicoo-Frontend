@@ -108,7 +108,7 @@ const HospitalList = () => {
   }
 
   return (
-    <div className={`container mx-auto p-4 mt-10 ${darkMode ? 'bg-dark-bg text-dark-text' : 'bg-light-bg text-light-text'}`}>
+    <div className={`container mx-auto p-4 ${darkMode ? 'bg-dark-bg text-dark-text' : 'bg-light-bg text-light-text'}`}>
       <h1 className="text-3xl font-bold mb-6 text-center">Hospital Directory</h1>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       <div className="relative flex items-center mb-10">

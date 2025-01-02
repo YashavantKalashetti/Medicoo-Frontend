@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useContext, forwardRef, useImperativeHandle } from 'react';
 import { Modal, Alert, Button, List, Typography, Badge, notification } from 'antd';
 import { AlertOutlined, CloseCircleOutlined, SoundOutlined, BellOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import Draggable from 'react-draggable';
@@ -8,10 +8,12 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import alertSound from './alert.mp3';
 import { Ambulance, MapPin, SquareActivity } from 'lucide-react';
+import { AuthContext } from '@/context/AuthContext';
+import { fetchWithInterceptors } from '@/Interceptors/FetchInterceptors';
 
 const { Title } = Typography;
 
-const EmergencyNotificationSystem = () => {
+const EmergencyNotificationSystem = forwardRef((props, ref) => {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [playAlert] = useSound(alertSound, { volume: 0.7 });
@@ -20,38 +22,51 @@ const EmergencyNotificationSystem = () => {
   const [socket, setSocket] = useState(null);
   const [socketOpen, setSocketOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [closeWebSocket, setCloseWebSocket] = useState(() => () => {});
+
+  useImperativeHandle(ref, () => ({
+    callChildFunction: closeWebSocket,
+  }));
 
   const [location, setLocation] = useState({ latitude: null, longitude: null });
 
+  const {user} = useContext(AuthContext)
+
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://localhost:8080/dedicatedMessages?userId=2bf9c26f-4a32-43fa-9f64-29a225d78644`);
-    setSocket(newSocket);
 
-    newSocket.onopen = () => {
-      console.log('WebSocket connection for doctor details opened');
-      setSocketOpen(true);
-    };
+    if(user && user.userId != null){
+      const newSocket = new WebSocket(`ws://localhost:8080/dedicatedMessages?userId=${user.userId}`);
+      setSocket(newSocket);
 
-    newSocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log('Message from doctor details:', message);
-      handleNewNotification({
-        id: message.from,
-        title: 'Emergency Medical Alert',
-        message: message.data,
-      });
-      setError(null);
-    };
+      // console.log("Changes")
 
-    newSocket.onclose = (event) => {
-      console.log('WebSocket connection for doctor details closed:', event);
-      setSocketOpen(false);
-    };
+      newSocket.onopen = () => {
+        console.log('WebSocket connection for doctor details opened');
+        setSocketOpen(true);
+      };
 
-    newSocket.onerror = (error) => {
-      console.error('WebSocket error for doctor details:', error);
-      setError(error);
-    };
+      newSocket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        handleNewNotification({
+          id: message.from,
+          title: 'Emergency Medical Alert',
+          message: message.data,
+        });
+        setError(null);
+      };
+
+      newSocket.onclose = (event) => {
+        console.log('WebSocket connection for doctor details closed:', event);
+        setSocketOpen(false);
+      };
+
+      newSocket.onerror = (error) => {
+        console.error('WebSocket error for doctor details:', error);
+        setError(error);
+      };
+
+      setCloseWebSocket(() => () => newSocket.close());
+    }
   }, []);
 
   const extractCoordinates = (message) => {
@@ -119,18 +134,24 @@ const EmergencyNotificationSystem = () => {
 
   const handleOvertakeAppointment = async () => {
     try {
+
       const patient_number = extractPatientId(selectedNotification.message)
       if(!patient_number){
         throw new Error("Patient Number is not present")
       }
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital/patientEmergencyAppointment/${patient_number}`,{
-        headers:{
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
-        }
-      })
-      if(!response.ok){
-        throw new Error("Appointment already undertaken by other hospital")
-      }
+      // const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/hospital/patientEmergencyAppointment/${patient_number}`,{
+      //   headers:{
+      //     'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NmFkZmQzZS1lYmEyLTRhODQtOWEwOS05YjQ0MzA4NGQyYTUiLCJyb2xlIjoiSE9TUElUQUwiLCJlbWFpbCI6ImJtc0BlbWFpbC5jb20iLCJpYXQiOjE3MjE5MjczNzIsImV4cCI6MTcyMjM1OTM3Mn0.B4F2ENVluUsiTWMgJsbD5wwV95VJk0-U1bAY04yOi3k`
+      //   }
+      // })
+      // if(!response.ok){
+      //   throw new Error("Appointment already undertaken by other hospital")
+      // }
+
+      const data = await fetchWithInterceptors(`${import.meta.env.VITE_BACKEND_URL}/hospital/patientEmergencyAppointment/${patient_number}`, {
+        method: 'GET',
+      });
+
       notification.success({
         message: 'Appointment Request Considered',
         description: 'The appointment request has been successfully considered.',
@@ -290,6 +311,6 @@ const EmergencyNotificationSystem = () => {
       </Modal>
     </>
   );
-};
+});
 
 export default EmergencyNotificationSystem;
