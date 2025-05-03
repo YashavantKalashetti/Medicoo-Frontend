@@ -63,7 +63,7 @@ const DoctorCard = ({ doctor }) => (
       </CardContent>
     </Card>
   </motion.div>
-);
+);  
 
 const SearchBarWithDropdown = ({ searchTerm, setSearchTerm, selectedSpecialization, setSelectedSpecialization }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
