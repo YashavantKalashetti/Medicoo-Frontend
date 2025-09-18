@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Heart, User, Menu, X, HeartPulse, LogOut, SunMoon, Sun, Moon } from 'lucide-react';
 import NotificationComponent from '@/Auth/Notification';
@@ -17,6 +17,37 @@ const Navbar = () => {
   const childRef = useRef();
 
   const {user, dispatch} = useContext(AuthContext)
+
+  useEffect(() => {
+    // I want to sent a 3 cron job for every 14 minutes to keep my server up and running
+    const cron1Interval = setInterval(() => {
+      fetch('https://medicoo-backend-microservice.onrender.com/api/v1/')
+        .then(response => response.json())
+        .then(data => console.log('Server keep-alive response:', data))
+        .catch(error => console.error('Error in keep-alive request:', error));
+    }, 14 * 60 * 1000); // 14 minutes
+
+    const cron2Interval = setInterval(() => {
+      fetch('https://medicoo-backend-main.onrender.com/api/v1/')
+        .then(response => response.json())
+        .then(data => console.log('Server keep-alive response:', data))
+        .catch(error => console.error('Error in keep-alive request:', error));
+    }, 14 * 60 * 1000); // 14 minutes
+
+    const cron3Interval = setInterval(() => {
+      fetch('https://medico-6vv2.onrender.com/')
+        .then(response => response.json())
+        .then(data => console.log('Server keep-alive response:', data))
+        .catch(error => console.error('Error in keep-alive request:', error));
+    }, 14 * 60 * 1000); // 14 minutes
+
+    return () => {
+      clearInterval(cron1Interval);
+      clearInterval(cron2Interval);
+      clearInterval(cron3Interval);
+    };
+  }, []);
+
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
