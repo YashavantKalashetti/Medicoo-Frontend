@@ -10,7 +10,7 @@ const DoctorDetails = () => {
   const userId = '1260d06d-daed-415b-b1d0-01760c96bc0a';
 
   useEffect(() => {
-    const newSocket = new WebSocket(`http://localhost:3030/details?userId=${userId}&type=doctor&id=${doctorId}`);
+    const newSocket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}/details?userId=${userId}&type=doctor&id=${doctorId}`);
     setSocket(newSocket);
 
     newSocket.onopen = () => {

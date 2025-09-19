@@ -35,7 +35,7 @@ const EmergencyNotificationSystem = forwardRef((props, ref) => {
   useEffect(() => {
 
     if(user && user.userId != null){
-      const newSocket = new WebSocket(`ws://localhost:8080/dedicatedMessages?userId=${user.userId}`);
+      const newSocket = new WebSocket(`ws://medicoo-backend-microservice.onrender.com/dedicatedMessages?userId=${user.userId}`);
       setSocket(newSocket);
 
       // console.log("Changes")

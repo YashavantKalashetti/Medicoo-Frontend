@@ -123,7 +123,7 @@ const PatientSignupForm = () => {
         dob: dayjs(formData.dob).format('YYYY-MM-DD'),
       };
       console.log("submitData : ", submitData);
-      const response = await axios.post('http://localhost:3030/api/v1/auth/patient/signup', submitData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/patient/signup`, submitData);
       if (response.status === 200) {
         setSuccess('Registration successful!');
         setTimeout(() => {

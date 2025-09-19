@@ -49,7 +49,7 @@ const DoctorAppointmentPage = () => {
   useEffect(() => {
     const fetchDoctorDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3030/api/v1/search/doctors/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/search/doctors/${id}`);
         setDoctorData(response.data);
         if (response.data.availableSlotsByDate.length > 0) {
           setSelectedDate(response.data.availableSlotsByDate[0].date);
@@ -69,7 +69,7 @@ const DoctorAppointmentPage = () => {
   useEffect(() => {
     if (!doctorData || !user?.userId) return;
 
-    const newSocket = new WebSocket(`http://localhost:8080/details?userId=${user?.userId}&type=doctor&id=${id}`);
+    const newSocket = new WebSocket(`${import.meta.env.VITE_MICROSERVICES_URL}/details?userId=${user?.userId}&type=doctor&id=${id}`);
     setSocket(newSocket);
 
     newSocket.onopen = () => console.log('WebSocket connection for time slots opened');

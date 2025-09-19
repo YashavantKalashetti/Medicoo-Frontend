@@ -19,7 +19,7 @@ const HospitalLocator = () => {
 
   const fetchHospitals = async (latitude, longitude) => {
     try {
-      const response = await fetch(`http://localhost:3030/api/v1/search/nearby-hospitals?latitude=${latitude}&longitude=${longitude}`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search/nearby-hospitals?latitude=${latitude}&longitude=${longitude}`);
       if (!response.ok) {
         throw new Error('Failed to fetch hospitals');
       }

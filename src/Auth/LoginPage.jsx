@@ -44,7 +44,7 @@ const MedicalSignInForm = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3030/api/v1/auth/${userType}/signin`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/${userType}/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -285,7 +285,7 @@ const DoctorSearchPage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:3030/api/v1/search/doctors?page=1&perPage=100');
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/search/doctors?page=1&perPage=100`);
         const doctors = response.data.doctors.map(doctor => ({
           ...doctor,
           avatar: doctor.avatar || DEFAULT_AVATAR
